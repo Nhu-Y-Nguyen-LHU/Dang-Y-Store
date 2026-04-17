@@ -1,0 +1,24 @@
+@use '../../styles/variables' as var;
+
+.productGridContainer {
+  width: 100%;
+  padding: 4rem 2rem; // Generous whitespace
+  background-color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 1.5rem; // row-gap, column-gap
+
+  // Tablet and above
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  // Desktop
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem 2rem;
+  }
+}

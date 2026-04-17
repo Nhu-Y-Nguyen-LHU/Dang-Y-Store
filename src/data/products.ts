@@ -1,0 +1,85 @@
+import { Product } from '@/types/product';
+
+export const mockProducts: Product[] = [
+  {
+    id: 'mdny-001',
+    name: 'Nhẫn Kim Cương Dáng Ý Signature',
+    slug: 'the-dang-y-signature-ring',
+    price: 2500000,
+    images: ['/images/products/nhan-kim-cuong.jpg'],
+    category: 'Fine Jewelry',
+    collection: 'Signature',
+    materials: ['Vàng', 'Kim cương'],
+    createdAt: '2026-03-18T10:00:00.000Z',
+    description:
+      'Được hoàn thiện từ vàng 18K và điểm xuyết bằng ánh sáng tinh khiết của kim cương, thiết kế này đại diện cho tinh thần tối giản nhưng không bao giờ mờ nhạt của Dáng Ý.',
+    isNew: true,
+  },
+  {
+    id: 'mdny-002',
+    name: 'Khăn Lụa Midnight Wine',
+    slug: 'midnight-wine-silk-scarf',
+    price: 790000,
+    images: ['/images/products/khan-lua.jpg'],
+    category: 'Accessories',
+    collection: 'Midnight Wine',
+    materials: ['Lụa'],
+    createdAt: '2026-02-02T10:00:00.000Z',
+    description:
+      'Lụa tơ tằm chọn lọc, mềm nhẹ và rũ tự nhiên. Sắc đỏ rượu trầm gợi cảm hứng về một đêm thanh lịch — kín đáo, nhưng đầy sức hút.',
+  },
+  {
+    id: 'mdny-003',
+    name: 'Khuyên Ngọc Trai Ethereal',
+    slug: 'ethereal-pearl-earrings',
+    price: 1650000,
+    images: ['/images/products/khuyen-ngoc-trai.jpg'],
+    category: 'Fine Jewelry',
+    collection: 'Ethereal',
+    materials: ['Bạc'],
+    createdAt: '2026-01-20T10:00:00.000Z',
+    description:
+      'Ngọc trai ánh mịn được đặt trên cấu trúc thanh mảnh, tạo nên độ chuyển động nhẹ nhàng. Một điểm nhấn tinh tế để nâng tầm mọi khoảnh khắc.',
+    isNew: true,
+  },
+  {
+    id: 'mdny-004',
+    name: 'Ví Cầm Tay Da Marquess',
+    slug: 'the-marquess-leather-clutch',
+    price: 1890000,
+    images: ['/images/products/vi-cam-tay.jpg'],
+    category: 'Handbags',
+    collection: 'Marquess',
+    materials: ['Da'],
+    createdAt: '2025-12-14T10:00:00.000Z',
+    description:
+      'Da bê Ý chọn lọc với phom dáng gọn gàng, sắc nét. Khoá đỏ rượu đặc trưng là lời ký tên tinh tế của Dáng Ý — sang trọng, không phô trương.',
+  },
+  {
+    id: 'mdny-005',
+    name: 'Vòng Tay Di sản (Heritage Bracelet)',
+    slug: 'heritage-bracelet',
+    price: 3200000,
+    images: ['/images/products/vong-tay.webp'],
+    category: 'Fine Jewelry',
+    collection: 'Heritage',
+    materials: ['Vàng'],
+    createdAt: '2025-11-01T10:00:00.000Z',
+    description:
+      'Đường nét cân xứng và chất liệu cao cấp gặp nhau trong một thiết kế mang hơi thở “di sản”. Mỗi mắt nối như một lời nhắc về vẻ đẹp bền vững.',
+  },
+  {
+    id: 'mdny-006',
+    name: 'Loafer Nhung Velvet Noir',
+    slug: 'velvet-noir-loafers',
+    price: 1450000,
+    images: ['/images/products/loafer.jpg'],
+    category: 'Footwear',
+    collection: 'Noir',
+    materials: ['Nhung'],
+    createdAt: '2025-10-10T10:00:00.000Z',
+    description:
+      'Nhung mịn với độ bóng vừa đủ, được hoàn thiện thủ công cho cảm giác êm ái. Một lựa chọn lịch lãm cho những buổi tối cần sự hiện diện nhẹ nhàng.',
+    isNew: true,
+  },
+];

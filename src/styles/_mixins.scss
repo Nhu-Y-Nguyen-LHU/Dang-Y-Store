@@ -1,0 +1,19 @@
+/* Mixins for Dáng Ý */
+
+@mixin flex-center($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin glassmorphism($blur: 10px, $color: rgba(255, 255, 255, 0.1)) {
+  background: $color;
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@mixin smooth-transition($property: all, $duration: 0.5s) {
+  transition: $property $duration cubic-bezier(0.43, 0.13, 0.23, 0.96);
+}
