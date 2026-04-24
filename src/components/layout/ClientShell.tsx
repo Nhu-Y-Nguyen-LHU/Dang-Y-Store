@@ -33,16 +33,9 @@ export default function ClientShell({
         const scrollTriggerModule = await import('gsap/ScrollTrigger');
         if (isCancelled) return;
 
-        const gsap =
-          (gsapModule as unknown as { default?: any; gsap?: any }).default ??
-          (gsapModule as unknown as { default?: any; gsap?: any }).gsap ??
-          gsapModule;
-
+        const gsap = gsapModule.gsap ?? gsapModule.default;
         const ScrollTrigger =
-          (scrollTriggerModule as unknown as { ScrollTrigger?: any; default?: any })
-            .ScrollTrigger ??
-          (scrollTriggerModule as unknown as { ScrollTrigger?: any; default?: any })
-            .default;
+          scrollTriggerModule.ScrollTrigger ?? scrollTriggerModule.default;
 
         gsap.registerPlugin(ScrollTrigger);
 

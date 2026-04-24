@@ -10,6 +10,12 @@ $light-gray: #F9FAFB;
 $medium-gray: #E5E7EB;
 $dark-gray: #4B5563;
 
+// Semantic aliases used across component styles
+$text-primary: $deep-maroon;
+$text-secondary: $dark-gray;
+$border-light: $medium-gray;
+$bg-light: $light-gray;
+
 // System Colors
 $success: #10B981;
 $error: #EF4444;

@@ -1,3 +1,14 @@
+export interface ProductVariant {
+  id: string;
+  sku: string;
+  name?: string; // e.g., "Gold - Size M"
+  color?: string;
+  size?: string;
+  material?: string;
+  price: number;
+  stock: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -10,4 +21,6 @@ export interface Product {
   createdAt: string; // ISO date string
   description: string;
   isNew?: boolean;
+  variants?: ProductVariant[];
+  hasVariants?: boolean;
 }

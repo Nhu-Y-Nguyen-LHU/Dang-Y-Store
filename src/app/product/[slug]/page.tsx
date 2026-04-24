@@ -1,13 +1,7 @@
-import { mockProducts } from '@/data/products';
-import type { Product } from '@/types/product';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from '@/components/products/ProductDetailClient';
 import type { Metadata } from 'next';
-
-// This is a simplified version. A real app would fetch data based on slug.
-const getProductBySlug = (slug: string): Product | undefined => {
-  return mockProducts.find((p) => p.slug === slug);
-};
+import { getProductBySlug } from '@/lib/products';
 
 export async function generateMetadata({
   params,

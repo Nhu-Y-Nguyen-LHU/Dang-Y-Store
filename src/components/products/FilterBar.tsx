@@ -83,11 +83,19 @@ export default function FilterBar({ products, value, onChange }: FilterBarProps)
       ? current.filter((x) => x !== item)
       : [...current, item];
 
-    update({ [key]: next } as any);
+    if (key === 'collections') {
+      update({ collections: next });
+      return;
+    }
+
+    update({ materials: next });
   };
 
   const priceMin = clamp(value.priceMin, 0, Math.max(0, value.priceMax));
   const priceMax = clamp(value.priceMax, Math.max(0, value.priceMin), maxPrice);
+  const hasCustomPrice = priceMin > 0 || priceMax < maxPrice;
+  const activeFilterCount =
+    value.collections.length + value.materials.length + (hasCustomPrice ? 1 : 0);
 
   useEffect(() => {
     if (priceMin !== value.priceMin || priceMax !== value.priceMax) {
@@ -172,10 +180,16 @@ export default function FilterBar({ products, value, onChange }: FilterBarProps)
             className={styles.filterButton}
             onClick={() => setIsFiltersOpen(true)}
           >
-            Bộ lọc
+            Bộ lọc {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
           </button>
         </div>
       </div>
+
+      {activeFilterCount > 0 && (
+        <div className={styles.filterHint}>
+          Đang áp dụng {activeFilterCount} tiêu chí lọc.
+        </div>
+      )}
 
       <aside
         className={`${styles.sidebar} ${isFiltersOpen ? styles.sidebarOpen : ''}`}
@@ -259,23 +273,35 @@ export default function FilterBar({ products, value, onChange }: FilterBarProps)
               aria-label="Giá tối đa"
             />
           </div>
+        </div>
 
-          <button
-            type="button"
-            className={styles.resetButton}
-            onClick={() =>
-              onChange({
-                query: '',
-                collections: [],
-                materials: [],
-                priceMin: 0,
-                priceMax: maxPrice,
-                sort: 'newest',
-              })
-            }
-          >
-            Đặt lại
-          </button>
+        <div className={styles.sidebarFooter}>
+          <p className={styles.footerHint}>Mẹo: bộ lọc được áp dụng ngay khi bạn chọn.</p>
+          <div className={styles.footerActions}>
+            <button
+              type="button"
+              className={styles.resetButton}
+              onClick={() =>
+                onChange({
+                  query: '',
+                  collections: [],
+                  materials: [],
+                  priceMin: 0,
+                  priceMax: maxPrice,
+                  sort: 'newest',
+                })
+              }
+            >
+              Đặt lại
+            </button>
+            <button
+              type="button"
+              className={styles.applyButton}
+              onClick={() => setIsFiltersOpen(false)}
+            >
+              Xong
+            </button>
+          </div>
         </div>
       </aside>
     </div>

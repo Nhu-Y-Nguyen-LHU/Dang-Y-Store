@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Minus, Plus, Trash2, X } from 'lucide-react';
 import styles from './CartDrawer.module.scss';
 import { useCartStore } from '@/store/useCartStore';
+import { useUIStore } from '@/store/useUIStore';
 import { formatCurrencyVND } from '@/store/useCartStore';
 
 const easeLuxury: [number, number, number, number] = [0.43, 0.13, 0.23, 0.96];
@@ -28,8 +29,8 @@ const drawerVariants = {
 };
 
 const CartDrawer = () => {
-  const isOpen = useCartStore((s) => s.isCartOpen);
-  const closeCart = useCartStore((s) => s.closeCart);
+  const isOpen = useUIStore((s) => s.isCartOpen);
+  const closeCart = useUIStore((s) => s.closeCart);
   const cart = useCartStore((s) => s.cart);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -61,7 +62,7 @@ const CartDrawer = () => {
           >
             <header className={styles.header}>
               <h2 className={styles.title}>Giỏ hàng</h2>
-              <button onClick={closeCart} className={styles.closeButton} aria-label="Đóng giỏ hàng">
+              <button type="button" onClick={closeCart} className={styles.closeButton} aria-label="Đóng giỏ hàng">
                 <X size={24} />
               </button>
             </header>
@@ -106,7 +107,7 @@ const CartDrawer = () => {
               ) : (
                 <div className={styles.items}>
                   {cart.map((item) => (
-                    <div key={item.product.id} className={styles.item}>
+                    <div key={item.lineId ?? item.product.id} className={styles.item}>
                       <div className={styles.itemImage}>
                         <Image
                           src={item.product.images[0]}
@@ -120,13 +121,17 @@ const CartDrawer = () => {
                         <div className={styles.itemTop}>
                           <div>
                             <p className={styles.itemName}>{item.product.name}</p>
+                            {item.variantName ? (
+                              <p className={styles.itemVariant}>{item.variantName}</p>
+                            ) : null}
                             <p className={styles.itemPrice}>
-                              {formatCurrencyVND(item.product.price)}
+                              {formatCurrencyVND(item.unitPrice ?? item.product.price)}
                             </p>
                           </div>
                           <button
+                            type="button"
                             className={styles.removeButton}
-                            onClick={() => removeItem(item.product.id)}
+                            onClick={() => removeItem(item.lineId ?? item.product.id)}
                             aria-label="Xoá sản phẩm"
                           >
                             <Trash2 size={18} />
@@ -136,26 +141,32 @@ const CartDrawer = () => {
                         <div className={styles.itemBottom}>
                           <div className={styles.qtyControls}>
                             <button
+                              type="button"
                               className={styles.qtyButton}
-                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity - 1)}
                               aria-label="Giảm số lượng"
                             >
                               <Minus size={16} />
                             </button>
                             <span className={styles.qtyValue}>{item.quantity}</span>
                             <button
+                              type="button"
                               className={styles.qtyButton}
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity + 1)}
                               aria-label="Tăng số lượng"
+                              disabled={item.stockLimit !== null && item.quantity >= item.stockLimit}
                             >
                               <Plus size={16} />
                             </button>
                           </div>
 
                           <p className={styles.lineTotal}>
-                            {formatCurrencyVND(item.product.price * item.quantity)}
+                            {formatCurrencyVND((item.unitPrice ?? item.product.price) * item.quantity)}
                           </p>
                         </div>
+                        {item.stockLimit !== null ? (
+                          <p className={styles.stockNote}>Tồn kho khả dụng: {item.stockLimit}</p>
+                        ) : null}
                       </div>
                     </div>
                   ))}

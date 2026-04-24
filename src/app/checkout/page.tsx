@@ -80,6 +80,12 @@ export default function CheckoutPage() {
 
   const subtotal = useMemo(() => totalPrice(), [totalPrice]);
 
+  const stockViolations = useMemo(() => {
+    return cart.filter(
+      (item) => item.stockLimit !== null && item.quantity > item.stockLimit,
+    );
+  }, [cart]);
+
   const canCheckout = hasHydrated && cart.length > 0;
 
   if (!hasHydrated) {
@@ -133,6 +139,10 @@ export default function CheckoutPage() {
   }
 
   const placeOrder = () => {
+    if (stockViolations.length > 0) {
+      return;
+    }
+
     const base = Date.now().toString(36).toUpperCase();
     const suffix = Math.floor(Math.random() * 900 + 100).toString();
     const orderCode = `DY-${base}-${suffix}`;
@@ -397,11 +407,17 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={placeOrder}
-                    className="inline-flex items-center justify-center rounded-md bg-[#722F37] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#4A1C21]"
+                    disabled={stockViolations.length > 0}
+                    className="inline-flex items-center justify-center rounded-md bg-[#722F37] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#4A1C21] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Đặt hàng
                   </button>
                 </div>
+                {stockViolations.length > 0 ? (
+                  <p className="text-sm text-[#722F37]">
+                    Một số sản phẩm đang vượt tồn kho. Vui lòng quay lại giỏ hàng để giảm số lượng.
+                  </p>
+                ) : null}
               </div>
             )}
           </div>
@@ -423,15 +439,18 @@ export default function CheckoutPage() {
 
           <div className="mt-6 space-y-4">
             {cart.map((item) => (
-              <div key={item.product.id} className="flex items-start justify-between gap-4">
+              <div key={item.lineId ?? item.product.id} className="flex items-start justify-between gap-4">
                 <div>
                   <div className="font-serif text-base tracking-tight text-zinc-950">
                     {item.product.name}
                   </div>
+                  {item.variantName ? (
+                    <div className="mt-1 text-sm text-zinc-500">{item.variantName}</div>
+                  ) : null}
                   <div className="mt-1 text-sm text-zinc-600">Số lượng: {item.quantity}</div>
                 </div>
                 <div className="text-sm text-zinc-900">
-                  {formatCurrencyVND(item.product.price * item.quantity)}
+                  {formatCurrencyVND((item.unitPrice ?? item.product.price) * item.quantity)}
                 </div>
               </div>
             ))}

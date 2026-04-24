@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { Product } from '@/types/product';
 import ProductGrid from '@/components/products/ProductGrid';
 import FilterBar, {
@@ -10,6 +11,53 @@ import FilterBar, {
 
 function getMaxPrice(products: Product[]) {
   return products.reduce((max, p) => Math.max(max, p.price), 0);
+}
+
+function parseCsv(value: string | null) {
+  if (!value) return [] as string[];
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function parseFiltersFromSearchParams(
+  params: URLSearchParams,
+  maxPrice: number,
+): ProductFilters {
+  const sortParam = params.get('sort');
+  const sort: SortOption =
+    sortParam === 'price-asc' || sortParam === 'price-desc' || sortParam === 'newest'
+      ? sortParam
+      : 'newest';
+
+  const priceMinParam = Number(params.get('priceMin'));
+  const priceMaxParam = Number(params.get('priceMax'));
+
+  return {
+    query: params.get('q') ?? '',
+    collections: parseCsv(params.get('collections')),
+    materials: parseCsv(params.get('materials')),
+    priceMin: Number.isFinite(priceMinParam) && priceMinParam >= 0 ? priceMinParam : 0,
+    priceMax:
+      Number.isFinite(priceMaxParam) && priceMaxParam >= 0
+        ? priceMaxParam
+        : maxPrice,
+    sort,
+  };
+}
+
+function serializeFiltersToParams(filters: ProductFilters, maxPrice: number) {
+  const params = new URLSearchParams();
+
+  if (filters.query.trim()) params.set('q', filters.query.trim());
+  if (filters.collections.length > 0) params.set('collections', filters.collections.join(','));
+  if (filters.materials.length > 0) params.set('materials', filters.materials.join(','));
+  if (filters.priceMin > 0) params.set('priceMin', String(filters.priceMin));
+  if (filters.priceMax < maxPrice) params.set('priceMax', String(filters.priceMax));
+  if (filters.sort !== 'newest') params.set('sort', filters.sort);
+
+  return params;
 }
 
 function applyFilters(products: Product[], filters: ProductFilters) {
@@ -58,30 +106,33 @@ type ProductDiscoverySectionProps = {
 export default function ProductDiscoverySection({
   products,
 }: ProductDiscoverySectionProps) {
-  const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const maxPrice = useMemo(() => getMaxPrice(products), [products]);
+  const [loading] = useState(false);
+  const searchKey = searchParams.toString();
 
-  const [filters, setFilters] = useState<ProductFilters>({
-    query: '',
-    collections: [],
-    materials: [],
-    priceMin: 0,
-    priceMax: maxPrice,
-    sort: 'newest',
-  });
+  const filters = useMemo(
+    () => parseFiltersFromSearchParams(new URLSearchParams(searchKey), maxPrice),
+    [searchKey, maxPrice],
+  );
 
-  useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      priceMax: Math.max(prev.priceMax, maxPrice),
-    }));
-  }, [maxPrice]);
+  const updateFilters = useCallback((nextFilters: ProductFilters) => {
+    const nextParams = serializeFiltersToParams(
+      {
+        ...nextFilters,
+        priceMax: Math.max(nextFilters.priceMax, maxPrice),
+      },
+      maxPrice,
+    );
+    const nextSearch = nextParams.toString();
 
-  useEffect(() => {
-    const t = window.setTimeout(() => setLoading(false), 650);
-    return () => window.clearTimeout(t);
-  }, []);
+    if (nextSearch !== searchKey) {
+      const nextUrl = nextSearch ? `${pathname}?${nextSearch}` : pathname;
+      router.push(nextUrl, { scroll: false });
+    }
+  }, [pathname, router, searchKey, maxPrice]);
 
   const filtered = useMemo(() => {
     return applyFilters(products, {
@@ -89,6 +140,8 @@ export default function ProductDiscoverySection({
       priceMax: Math.max(filters.priceMax, maxPrice),
     });
   }, [products, filters, maxPrice]);
+
+  const hasNoResults = !loading && products.length > 0 && filtered.length === 0;
 
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-10">
@@ -101,10 +154,19 @@ export default function ProductDiscoverySection({
         </p>
       </div>
 
-      <FilterBar products={products} value={filters} onChange={setFilters} />
+      <FilterBar products={products} value={filters} onChange={updateFilters} />
 
       <div className="mt-8">
-        <ProductGrid products={filtered} loading={loading} skeletonCount={8} />
+        {hasNoResults ? (
+          <div className="rounded-2xl border border-zinc-200 bg-white p-10 text-center">
+            <p className="font-serif text-lg text-zinc-900">Khong tim thay san pham phu hop.</p>
+            <p className="mt-2 text-sm text-zinc-600">
+              Thu thay doi bo loc hoac tim kiem bang tu khoa ngan hon.
+            </p>
+          </div>
+        ) : (
+          <ProductGrid products={filtered} loading={loading} skeletonCount={8} />
+        )}
       </div>
     </section>
   );

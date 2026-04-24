@@ -6,13 +6,17 @@ import { usePathname } from 'next/navigation';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCartStore } from '@/store/useCartStore';
+import { useWishlistStore } from '@/store/useWishlistStore';
+import { useUIStore } from '@/store/useUIStore';
 
 export default function Header() {
   const pathname = usePathname();
-  const hasHydrated = useCartStore((s) => s.hasHydrated);
-  const toggleCart = useCartStore((s) => s.toggleCart);
+  const cartHydrated = useCartStore((s) => s.hasHydrated);
+  const wishlistHydrated = useWishlistStore((s) => s.hasHydrated);
+  const hasHydrated = cartHydrated && wishlistHydrated;
+  const toggleCart = useUIStore((s) => s.toggleCart);
   const totalItems = useCartStore((s) => s.totalItems());
-  const totalWishlistItems = useCartStore((s) => s.totalWishlistItems());
+  const totalWishlistItems = useWishlistStore((s) => s.totalWishlistItems());
 
   const isActive = (href: string) => {
     if (!pathname) return false;

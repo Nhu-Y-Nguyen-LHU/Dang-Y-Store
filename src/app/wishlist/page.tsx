@@ -1,19 +1,20 @@
 'use client';
 
 import { useMemo } from 'react';
-import { mockProducts } from '@/data/products';
 import ProductGrid from '@/components/products/ProductGrid';
-import { useCartStore } from '@/store/useCartStore';
+import { getAllProducts } from '@/lib/products';
+import { useWishlistStore } from '@/store/useWishlistStore';
 
 export default function WishlistPage() {
-  const hasHydrated = useCartStore((s) => s.hasHydrated);
-  const wishlistIds = useCartStore((s) => s.wishlistIds);
+  const hasHydrated = useWishlistStore((s) => s.hasHydrated);
+  const wishlistIds = useWishlistStore((s) => s.wishlistIds);
+  const allProducts = getAllProducts();
 
   const products = useMemo(() => {
     if (!hasHydrated) return [];
     const idSet = new Set(wishlistIds);
-    return mockProducts.filter((p) => idSet.has(p.id));
-  }, [hasHydrated, wishlistIds]);
+    return allProducts.filter((p) => idSet.has(p.id));
+  }, [allProducts, hasHydrated, wishlistIds]);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-10">

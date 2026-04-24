@@ -4,11 +4,13 @@ import { useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'r
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Product } from '@/types/product';
+import type { Product, ProductVariant } from '@/types/product';
 import { useCartStore } from '@/store/useCartStore';
+import { useUIStore } from '@/store/useUIStore';
 import { formatCurrencyVND } from '@/store/useCartStore';
-import { mockProducts } from '@/data/products';
+import { getRelatedProducts } from '@/lib/products';
 import ProductCard from '@/components/products/ProductCard';
+import VariantSelector from '@/components/products/VariantSelector';
 
 interface ProductDetailClientProps {
   product: Product;
@@ -17,6 +19,12 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
+  const openCart = useUIStore((s) => s.openCart);
+
+  // Initialize selected variant
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(() => {
+    return product.variants && product.variants.length > 0 ? product.variants[0] : null;
+  });
 
   const [activeTab, setActiveTab] = useState<'reviews' | 'care'>('reviews');
 
@@ -34,10 +42,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   }, [product.images, activeIndex]);
 
   const related = useMemo(() => {
-    return mockProducts
-      .filter((p) => p.category === product.category && p.id !== product.id)
-      .slice(0, 4);
-  }, [product.category, product.id]);
+    return getRelatedProducts(product, 4);
+  }, [product]);
 
   const reviews = useMemo(
     () => [
@@ -187,7 +193,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05, ease: [0.43, 0.13, 0.23, 0.96] }}
           >
-            {formatCurrencyVND(product.price)}
+            {selectedVariant ? formatCurrencyVND(selectedVariant.price) : formatCurrencyVND(product.price)}
           </motion.p>
 
           <div className="mt-8 space-y-3 text-zinc-700">
@@ -202,13 +208,36 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             </p>
           </div>
 
+          {product.hasVariants && selectedVariant && (
+            <motion.div
+              className="mt-8"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.43, 0.13, 0.23, 0.96] }}
+            >
+              <VariantSelector
+                product={product}
+                selectedVariant={selectedVariant}
+                onVariantChange={setSelectedVariant}
+              />
+            </motion.div>
+          )}
+
           <div className="mt-10">
             <button
               type="button"
-              onClick={() => addItem(product, 1)}
-              className="inline-flex w-full items-center justify-center rounded-md bg-[#722F37] px-6 py-4 font-sans text-sm font-medium tracking-wide text-white transition-colors hover:bg-[#4A1C21] md:w-auto"
+              onClick={() => {
+                addItem(product, 1, {
+                  unitPrice: selectedVariant?.price ?? product.price,
+                  stockLimit: selectedVariant?.stock ?? null,
+                  variant: selectedVariant,
+                });
+                openCart();
+              }}
+              disabled={!selectedVariant || selectedVariant.stock === 0}
+              className="inline-flex w-full items-center justify-center rounded-md bg-[#722F37] px-6 py-4 font-sans text-sm font-medium tracking-wide text-white transition-colors hover:bg-[#4A1C21] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
             >
-              Thêm vào giỏ hàng
+              {selectedVariant?.stock === 0 ? 'Hết hàng' : 'Thêm vào giỏ hàng'}
             </button>
           </div>
 

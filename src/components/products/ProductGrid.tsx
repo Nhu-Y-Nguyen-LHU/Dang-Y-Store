@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { mockProducts } from '@/data/products';
+import { getAllProducts } from '@/lib/products';
 import ProductCard from './ProductCard';
 import ProductCardSkeleton from './ProductCardSkeleton';
 import styles from './ProductGrid.module.scss';
@@ -17,12 +17,15 @@ type ProductGridProps = {
 };
 
 const ProductGrid = ({
-  products = mockProducts,
+  products = getAllProducts(),
   loading = false,
   skeletonCount = 8,
 }: ProductGridProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const safeProducts = products.filter((product) => {
+    return Boolean(product && product.id && product.name);
+  });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,7 +64,7 @@ const ProductGrid = ({
                 <ProductCardSkeleton />
               </motion.div>
             ))
-          : products.map((product) => (
+          : safeProducts.map((product) => (
               <motion.div key={product.id} variants={cardVariants}>
                 <ProductCard product={product} />
               </motion.div>

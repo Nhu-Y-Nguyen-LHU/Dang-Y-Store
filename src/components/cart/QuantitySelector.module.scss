@@ -1,0 +1,95 @@
+@use '@/styles/variables' as *;
+
+.quantitySelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid $border-light;
+  border-radius: 0.375rem;
+  background-color: white;
+  width: fit-content;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background-color: transparent;
+  color: $text-primary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 1rem;
+
+  &:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    color: #722F37;
+  }
+
+  &:active:not(:disabled) {
+    background-color: #e5e7eb;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    color: $text-secondary;
+  }
+}
+
+.input {
+  width: 3rem;
+  text-align: center;
+  border: none;
+  background-color: transparent;
+  font-weight: 500;
+  font-size: 1rem;
+  color: $text-primary;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Remove spinner for number input
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+// Large variant
+.large {
+  .button {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.125rem;
+  }
+
+  .input {
+    width: 3.5rem;
+    font-size: 1.125rem;
+  }
+}
+
+// Compact variant
+.compact {
+  .button {
+    width: 1.875rem;
+    height: 1.875rem;
+    font-size: 0.875rem;
+  }
+
+  .input {
+    width: 2.5rem;
+    font-size: 0.875rem;
+  }
+}

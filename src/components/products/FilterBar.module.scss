@@ -4,6 +4,13 @@
   position: relative;
 }
 
+.filterHint {
+  margin-top: 0.6rem;
+  font-family: var.$font-sans;
+  font-size: 0.86rem;
+  color: rgba(114, 47, 55, 0.88);
+}
+
 .backdrop {
   position: fixed;
   inset: 0;
@@ -110,12 +117,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  line-height: 1;
 }
 
 .sortLabel {
   font-family: var.$font-sans;
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.62);
+  white-space: nowrap;
 }
 
 .sortSelect {
@@ -220,13 +229,15 @@
 .checkboxRow {
   display: flex;
   gap: 0.6rem;
-  align-items: center;
+  align-items: flex-start;
   font-family: var.$font-sans;
   font-size: 0.95rem;
+  line-height: 1.35;
   color: rgba(0, 0, 0, 0.78);
 
   input {
     accent-color: var.$wine-red;
+    margin-top: 0.15rem;
   }
 }
 
@@ -277,8 +288,7 @@
 }
 
 .resetButton {
-  margin-top: 1rem;
-  width: 100%;
+  width: 48%;
   height: 44px;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -289,5 +299,45 @@
 
   &:hover {
     background: rgba(114, 47, 55, 0.09);
+  }
+}
+
+.sidebarFooter {
+  position: sticky;
+  bottom: -1.15rem;
+  margin: 0 -1rem -1.15rem;
+  padding: 0.9rem 1rem 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.footerHint {
+  margin-bottom: 0.65rem;
+  font-family: var.$font-sans;
+  font-size: 0.82rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.applyButton {
+  width: 52%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(114, 47, 55, 0.9);
+  background: rgba(114, 47, 55, 1);
+  color: white;
+  font-family: var.$font-sans;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(74, 28, 33, 1);
+    border-color: rgba(74, 28, 33, 1);
   }
 }

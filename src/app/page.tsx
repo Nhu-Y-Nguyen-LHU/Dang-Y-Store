@@ -1,13 +1,12 @@
 import HeroSection from '@/components/sections/HeroSection';
-import ProductDiscoverySection from '@/components/sections/ProductDiscoverySection';
-import { mockProducts } from '@/data/products';
+import ProductDiscoveryDataSection from '@/components/sections/ProductDiscoveryDataSection';
 
 export default function Home() {
   return (
     <div className="bg-white">
       <HeroSection />
       <section id="products">
-        <ProductDiscoverySection products={mockProducts} />
+        <ProductDiscoveryDataSection />
       </section>
     </div>
   );
