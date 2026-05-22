@@ -1,69 +1,92 @@
-🛒 Dáng Ý Store - Hệ thống Thương mại điện tử E-commerce
-Đồ án Giữa kỳ môn Lập trình Front-End
+<div align="center">
+  <h1 align="center">🛍️ Dáng Ý Store - E-Commerce Platform</h1>
+  <p align="center">
+    <strong>Đồ án Giữa kỳ môn Lập trình Front-End | Đại học Lạc Hồng</strong>
+  </p>
+  <p align="center">
+    <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+    <img src="https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Ant_Design-0170FE?style=for-the-badge&logo=antdesign&logoColor=white" alt="Ant Design" />
+    <img src="https://img.shields.io/badge/Zustand-Bear-orange?style=for-the-badge" alt="Zustand" />
+  </p>
+</div>
 
-Một nền tảng thương mại điện tử giao diện người dùng (Front-end) tập trung vào hiệu năng tải trang và trải nghiệm mua sắm mượt mà, ứng dụng kiến trúc Server-First của Next.js.
+---
 
-👥 Đội ngũ thực hiện
-Sinh viên thực hiện & Chịu trách nhiệm chính: Nguyễn Thị Như Ý
+> *"Sự kết hợp giữa hiệu năng Server-First của Next.js và trải nghiệm tương tác mượt mà phía Client."*
 
-Quá trình phát triển: Đồ án được lập trình độc lập. Tuy nhiên, luồng trải nghiệm người dùng (UX) và logic quản lý trạng thái đã được tối ưu hóa thông qua các vòng tham vấn chuyên môn và đánh giá chéo (Peer-Review) cùng cộng sự ngoại khóa để đảm bảo tính thực tiễn cao nhất.
+## 📖 Giới thiệu dự án
 
-🎯 Mô tả dự án
-Dáng Ý Store là một giải pháp Front-end cho hệ thống bán lẻ trực tuyến, hướng đến tệp khách hàng Gen Z và dân văn phòng. Dự án giải quyết bài toán cân bằng giữa Tối ưu hóa công cụ tìm kiếm (SEO) thông qua Server-Side Rendering (SSR) và Trải nghiệm tương tác thời gian thực (Real-time UX) ở phía Client.
+**Dáng Ý Store** là một giải pháp Front-end cho hệ thống bán lẻ trực tuyến, hướng đến tệp khách hàng Gen Z và dân văn phòng. Dự án giải quyết bài toán cân bằng giữa việc **Tối ưu hóa công cụ tìm kiếm (SEO)** thông qua Server-Side Rendering (SSR) và **Trải nghiệm tương tác thời gian thực (Real-time UX)**.
 
-Luồng mua sắm được thiết kế liền mạch theo phễu chuyển đổi: từ khám phá danh mục, lọc sản phẩm động, tùy chọn biến thể phức tạp, đến quản lý giỏ hàng toàn cục (Global Cart) mà không cần tải lại trang.
+Luồng mua sắm được thiết kế liền mạch theo phễu chuyển đổi: từ khám phá danh mục, lọc sản phẩm động, tùy chọn biến thể phức tạp, đến quản lý giỏ hàng toàn cục (Global Cart).
 
-🚀 Công nghệ sử dụng
-Dự án được xây dựng trên hệ sinh thái Front-end hiện đại nhất:
+---
 
-Core Framework: Next.js 16 (App Router) & React 19
+## 👥 Đội ngũ Phát triển
 
-Ngôn ngữ: TypeScript (Đảm bảo Type-safety)
+| Vai trò | Thực hiện | Mô tả công việc |
+| :--- | :--- | :--- |
+| **Full Stack** | **Nguyễn Thị Như Ý** | Xây dựng kiến trúc Next.js, thiết kế UI/UX, tích hợp API Mocking và quản lý Global State (Zustand). |
 
-Giao diện & Styling:
+---
 
-Tailwind CSS v4 (Utility-first cho bố cục linh hoạt)
+## ✨ Chức năng cốt lõi (Core Features)
 
-Ant Design 6 (Hỗ trợ các UI Components phức tạp: Drawer, Dropdown)
+- ⚡ **Tối ưu SEO & Tốc độ tải:** Áp dụng kiến trúc React Server Components (RSC) cho Trang chủ và Trang chi tiết sản phẩm.
+- 🛒 **Global Dynamic Cart:** Quản lý giỏ hàng bằng trạng thái toàn cục (Zustand) tích hợp dạng Drawer trượt, cho phép cập nhật tức thì mà không cần tải lại trang.
+- 🔍 **Lọc & Tìm kiếm thông minh:** Bộ lọc `FilterBar` tương tác phía Client, mang lại cảm giác phản hồi nhanh chóng khi duyệt danh mục.
+- 🎨 **Responsive 100%:** Hiển thị hoàn hảo và giữ nguyên tỷ lệ cấu trúc trên cả Mobile, Tablet và Desktop.
 
-Quản lý trạng thái (State Management): Zustand (Xử lý Global State cho Giỏ hàng cực nhẹ và tránh re-render thừa)
+---
 
-Hiệu ứng (Animation): Framer Motion & Lenis (Smooth scrolling)
+## 🛠 Công nghệ sử dụng
 
-Dữ liệu: Tích hợp API Mocking thông qua Next.js Route Handlers (/api/products) kết hợp dữ liệu JSON nội bộ.
+| Hạng mục | Công nghệ | Mục đích |
+| :--- | :--- | :--- |
+| **Core Framework** | Next.js 16 (App Router) | Xây dựng kiến trúc hệ thống, Routing, SSR/SSG. |
+| **Ngôn ngữ** | TypeScript | Ràng buộc kiểu dữ liệu tĩnh, giảm thiểu lỗi runtime. |
+| **UI & Styling** | Tailwind CSS v4, Ant Design 6 | Quản lý bố cục linh hoạt và sử dụng các component phức tạp. |
+| **State Management**| Zustand | Quản lý trạng thái Giỏ hàng gọn nhẹ, tránh re-render thừa. |
+| **API & Data** | Next.js Route Handlers | Thiết lập API Mock chuẩn RESTful (`/api/products`). |
 
-⚙️ Các chức năng cốt lõi
-Duyệt & Lọc sản phẩm: Lọc đa tiêu chí mà không làm gián đoạn luồng cuộn trang.
+---
 
-Xử lý biến thể động: Tự động tính toán giá và hiển thị tồn kho dựa trên tổ hợp Kích thước - Màu sắc được chọn.
+## 🚀 Hướng dẫn Cài đặt & Khởi chạy (Localhost)
 
-Giỏ hàng động (Dynamic Cart Drawer): Thêm, xóa, sửa số lượng sản phẩm tức thời ở mọi trang nhờ sức mạnh của Zustand.
+Để chạy dự án trên môi trường cục bộ, máy tính của bạn cần cài đặt sẵn **Node.js (>= 20.x)**.
 
-Responsive 100%: Giao diện hiển thị hoàn hảo trên cả Mobile, Tablet và Desktop.
-
-🛠 Hướng dẫn cài đặt và chạy trên Localhost
-Yêu cầu môi trường: Cài đặt sẵn Node.js (>= 20.x) và npm (>= 10.x).
-
-Bước 1: Clone repository về máy
-
+**Bước 1: Clone mã nguồn về máy**
 Bash
-git clone https://github.com/Nhu-Y-Nguyen-LHU/Dang-Y-Store.git
+git clone [https://github.com/Nhu-Y-Nguyen-LHU/Dang-Y-Store.git]
 cd Dang-Y-Store
-Bước 2: Cài đặt các thư viện phụ thuộc (Dependencies)
 
+Bước 2: Cài đặt các gói phụ thuộc (Dependencies)
 Bash
 npm install
-Bước 3: Khởi chạy máy chủ phát triển (Development Server)
 
+Bước 3: Khởi chạy máy chủ phát triển
 Bash
 npm run dev
-Bước 4: Trải nghiệm
-Mở trình duyệt và truy cập vào: http://localhost:3000
 
-🎥 Video Demo
-(Video trình bày trực tiếp các luồng điều hướng, giải thích kiến trúc thư mục mã nguồn và minh chứng hệ thống chạy thực tế trên Localhost)
+Bước 4: Trải nghiệm ứng dụng
+Mở trình duyệt web và truy cập vào địa chỉ: http://localhost:3000
 
-Link Thư mục Drive chứa Video: https://drive.google.com/drive/folders/116KlrZRK0XaNkEDqD-qW8jzB3Yvuyvz3?usp=drive_link
+🎥 Video Demo & Báo cáo
+Video Hướng dẫn & Demo: https://drive.google.com/drive/folders/116KlrZRK0XaNkEDqD-qW8jzB3Yvuyvz3?usp=drive_link
 
-Lưu ý cho Kiểm thử viên / Giảng viên:
-Do hệ thống hiện đang sử dụng Mock Data, các thao tác tải trang sẽ diễn ra gần như tức thì. Để quan sát rõ các hiệu ứng Loading Skeleton hoặc Error Boundary, vui lòng sử dụng tab Network trong Chrome DevTools và chuyển sang chế độ "Slow 3G".
+Tài liệu báo cáo: File Word báo cáo giữa kỳ đính kèm trong hồ sơ nộp bài.
+
+📦 Dang-Y-Store
+ ┣ 📂 app
+ ┃ ┣ 📂 (routes)          # Các trang chính (home, about, checkout)
+ ┃ ┣ 📂 api               # Mock API (Route Handlers)
+ ┃ ┣ 📂 products          # Danh sách sản phẩm
+ ┃ ┃ ┗ 📂 [slug]          # Dynamic Route cho trang chi tiết
+ ┃ ┣ 📜 layout.tsx        # Layout tổng
+ ┃ ┗ 📜 page.tsx          # Trang chủ
+ ┣ 📂 components          # React Components (Header, Footer, Card)
+ ┣ 📂 store               # Zustand Store (useCartStore.ts)
+ ┗ 📜 tailwind.config.ts  # Cấu hình UI
