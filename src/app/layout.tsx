@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display, Geist_Mono } from 'next/font/google';
+import 'antd/dist/reset.css';
 import './globals.css';
 import ClientShell from '@/components/layout/ClientShell';
+import AntdThemeProvider from '@/components/layout/AntdThemeProvider';
+import { Suspense } from 'react';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -56,7 +59,11 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ClientShell>{children}</ClientShell>
+        <AntdThemeProvider>
+          <Suspense fallback={null}>
+            <ClientShell>{children}</ClientShell>
+          </Suspense>
+        </AntdThemeProvider>
       </body>
     </html>
   );

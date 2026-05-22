@@ -5,7 +5,7 @@ import { getAllProducts } from '@/lib/products';
 import ProductCard from './ProductCard';
 import ProductCardSkeleton from './ProductCardSkeleton';
 import styles from './ProductGrid.module.scss';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { Product } from '@/types/product';
 
 const easeLuxury: [number, number, number, number] = [0.43, 0.13, 0.23, 0.96];
@@ -22,7 +22,6 @@ const ProductGrid = ({
   skeletonCount = 8,
 }: ProductGridProps) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
   const safeProducts = products.filter((product) => {
     return Boolean(product && product.id && product.name);
   });
@@ -56,7 +55,8 @@ const ProductGrid = ({
         className={styles.grid}
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1, margin: "100px" }}
       >
         {loading
           ? Array.from({ length: skeletonCount }).map((_, idx) => (

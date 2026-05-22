@@ -1,30 +1,37 @@
-'use client';
-
 import Link from 'next/link';
+import { FacebookFilled, InstagramOutlined, TikTokOutlined } from '@ant-design/icons';
 import styles from './Footer.module.scss';
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
+        <div className={styles.topMeta}>
+          <p className={styles.metaTitle}>Sàn thương mại điện tử Dáng Ý</p>
+          <p className={styles.metaText}>
+            Mua sắm an toàn với quy trình thanh toán bảo mật và vận chuyển toàn quốc.
+          </p>
+        </div>
+
         <div className={styles.grid}>
           <div>
-            <div className={styles.brand}>Dáng Ý</div>
+            <div className={styles.title}>Thông tin công ty</div>
             <p className={styles.text}>
-              Dáng Ý là lời tuyên ngôn của vẻ đẹp tối giản — nơi chất liệu thượng hạng
-              và kỹ nghệ thủ công hòa quyện để tạo nên những món đồ có giá trị bền vững theo
-              thời gian.
+              Dáng Ý Store JSC
+              <br />
+              Địa chỉ: 123 Nguyễn Huệ, Q1, TP.HCM
+              <br />
+              MST: 0312-XXX-XXX
+              <br />
+              Hotline: 1900 1234
             </p>
           </div>
 
           <div>
-            <div className={styles.title}>Dịch vụ khách hàng</div>
+            <div className={styles.title}>Chính sách mua hàng</div>
             <nav className={styles.list}>
               <Link href="/policies/returns" className={styles.link}>
                 Chính sách đổi trả
-              </Link>
-              <Link href="/policies/warranty" className={styles.link}>
-                Bảo hành
               </Link>
               <Link href="/policies/shipping-payment" className={styles.link}>
                 Giao hàng & thanh toán
@@ -32,50 +39,65 @@ export default function Footer() {
               <Link href="/policies/privacy" className={styles.link}>
                 Chính sách bảo mật
               </Link>
+              <Link href="/policies/warranty" className={styles.link}>
+                Bảo hành sản phẩm
+              </Link>
+            </nav>
+          </div>
+
+          <div>
+            <div className={styles.title}>Hỗ trợ khách hàng</div>
+            <nav className={styles.list}>
               <Link href="/contact" className={styles.link}>
                 Liên hệ
               </Link>
-            </nav>
-          </div>
-
-          <div>
-            <div className={styles.title}>Kết nối</div>
-            <nav className={styles.list}>
-              <Link href="https://instagram.com" className={styles.link} target="_blank" rel="noreferrer">
-                Instagram
-              </Link>
-              <Link href="https://facebook.com" className={styles.link} target="_blank" rel="noreferrer">
-                Facebook
-              </Link>
               <Link href="/about" className={styles.link}>
-                Câu chuyện Dáng Ý
+                Giới thiệu thương hiệu
+              </Link>
+              <Link href="/checkout" className={styles.link}>
+                Hướng dẫn thanh toán
+              </Link>
+              <Link href="/wishlist" className={styles.link}>
+                Danh sách yêu thích
               </Link>
             </nav>
           </div>
 
           <div>
-            <div className={styles.title}>Newsletter</div>
+            <div className={styles.title}>Kết nối mạng xã hội</div>
             <p className={styles.text}>
-              Nhận những cập nhật tinh tuyển về bộ sưu tập mới, câu chuyện chế tác và đặc quyền
-              dành riêng cho bạn.
+              Theo dõi Dáng Ý để nhận ưu đãi, livestream và xu hướng sản phẩm mới mỗi tuần.
             </p>
-            <form
-              className={styles.newsletterRow}
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <input
-                className={styles.input}
-                type="email"
-                placeholder="Email của bạn"
-                aria-label="Email"
-                required
-              />
-              <button className={styles.button} type="submit">
-                Đăng ký
-              </button>
-            </form>
+
+            <div className={styles.socialRow}>
+              <Link
+                href="https://facebook.com"
+                className={styles.socialLink}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+              >
+                <FacebookFilled />
+              </Link>
+              <Link
+                href="https://instagram.com"
+                className={styles.socialLink}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+              >
+                <InstagramOutlined />
+              </Link>
+              <Link
+                href="https://tiktok.com"
+                className={styles.socialLink}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="TikTok"
+              >
+                <TikTokOutlined />
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -83,7 +105,7 @@ export default function Footer() {
           <p className={styles.small}>
             © {new Date().getFullYear()} Dáng Ý. Tất cả quyền được bảo lưu.
           </p>
-          <p className={styles.small}>Thiết kế tối giản — tinh tế, lịch lãm.</p>
+          <p className={styles.small}>Giấy phép sàn TMĐT số 2026/DANGY/ECOM.</p>
         </div>
       </div>
     </footer>

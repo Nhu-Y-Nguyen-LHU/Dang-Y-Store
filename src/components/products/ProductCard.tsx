@@ -1,95 +1,148 @@
 'use client';
 
+import { Button, Card, Rate, Typography } from 'antd';
+import type { Product } from '@/types/product';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Product } from '@/types/product';
+import { useMemo } from 'react';
 import styles from './ProductCard.module.scss';
-import { motion } from 'framer-motion';
-import { formatCurrencyVND } from '@/store/useCartStore';
-import { Heart } from 'lucide-react';
-import { useWishlistStore } from '@/store/useWishlistStore';
+import { useCartStore } from '@/store/useCartStore';
+
+export type PublicApiProduct = {
+  id: number | string;
+  title: string;
+  price: number;
+  image: string;
+  rating?: number;
+  category?: string;
+  currency?: 'USD' | 'VND';
+};
 
 interface ProductCardProps {
-  product: Product;
+  product: Product | PublicApiProduct;
+  currency?: 'USD' | 'VND';
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
-  const toggleWishlist = useWishlistStore((s) => s.toggleWishlist);
-  const isWishlisted = useWishlistStore((s) => s.isWishlisted(product.id));
-  const primaryImage =
-    Array.isArray(product.images) && product.images.length > 0
-      ? product.images[0]
-      : '/images/products/nhan-kim-cuong.jpg';
-  const variants = product.variants ?? [];
-  const hasRenderableVariants = product.hasVariants && variants.length > 0;
-  const variantPrices = variants.map((v) => v.price).filter((p) => Number.isFinite(p));
-  const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : product.price;
-  const maxVariantPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : product.price;
+function isInternalProduct(product: Product | PublicApiProduct): product is Product {
+  return 'name' in product;
+}
+
+function formatPrice(price: number, currency: 'USD' | 'VND') {
+  return new Intl.NumberFormat(currency === 'VND' ? 'vi-VN' : 'en-US', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: currency === 'VND' ? 0 : 2,
+  }).format(price);
+}
+
+function toCartProduct(normalized: {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+  category: string;
+  href: string;
+}): Product {
+  const slug = normalized.href.startsWith('/product/')
+    ? normalized.href.replace('/products/', '')
+    : normalized.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  return {
+    id: normalized.id,
+    name: normalized.title,
+    slug,
+    price: normalized.price,
+    images: [normalized.image],
+    category: normalized.category,
+    collection: 'API Products',
+    materials: [],
+    createdAt: new Date().toISOString(),
+    description: normalized.title,
+    hasVariants: false,
+    variants: [],
+  };
+}
+
+const ProductCard = ({ product, currency }: ProductCardProps) => {
+  const addItem = useCartStore((s) => s.addItem);
+
+  const normalized = useMemo(() => {
+    if (isInternalProduct(product)) {
+      return {
+        id: product.id,
+        title: product.name,
+        image:
+          Array.isArray(product.images) && product.images.length > 0
+            ? product.images[0]
+            : `/images/categories/${(product.category || 'default').toLowerCase().replace(/\s+/g, '-')}.jpg`, // Ensure default category is used if null
+        price: product.price,
+        rating: 4.8,
+        currency: (currency ?? 'VND') as 'USD' | 'VND',
+        category: product.category || 'Sản phẩm',
+        href: `/products/${product.slug || product.id}`,
+      };
+    }
+
+    return {
+      id: String(product.id),
+      title: product.title,
+      image: product.image,
+      price: product.price,
+      rating: product.rating ?? 4,
+      currency: (currency ?? product.currency ?? 'USD') as 'USD' | 'VND',
+      category: product.category || 'Sản phẩm',
+      href: `/products/${product.id}`,
+    };
+  }, [currency, product]);
+
+  const displayPrice = formatPrice(normalized.price, normalized.currency);
+
+  const handleAddToCart = () => {
+    addItem(toCartProduct(normalized), 1);
+  };
 
   return (
-    <motion.div className={styles.productCard}>
-      <div className={styles.imageContainer}>
-        <Link href={`/product/${product.slug}`} className={styles.imageLink} aria-label={product.name}>
-          <motion.div
-            className={styles.imageMotion}
-            layoutId={`product-image-${product.id}`}
-            initial={{ scale: 1.08 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.9, ease: [0.43, 0.13, 0.23, 0.96] }}
-          >
+    <Card
+      hoverable
+      className={styles.productCard}
+      cover={
+        <div className={styles.imageWrap}>
+          <Link href={normalized.href} className={styles.imageLink} aria-label={normalized.title}>
             <Image
-              src={primaryImage}
-              alt={product.name}
+              src={normalized.image}
+              alt={normalized.title}
               fill
               className={styles.productImage}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+              onError={(e) => {
+                e.currentTarget.src = '/images/categories/default_real.jpg'; // Fallback to default image if the category-specific image is missing
+              }}
             />
-          </motion.div>
-        </Link>
+          </Link>
+        </div>
+      }
+    >
+      <div className={styles.body}>
+        <Typography.Title level={5} className={styles.title}>
+          {normalized.title}
+        </Typography.Title>
 
-        <button
-          type="button"
-          onClick={() => toggleWishlist(product.id)}
-          className={styles.wishlistButton}
-          aria-label={isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'}
-        >
-          <Heart
-            size={18}
-            className={isWishlisted ? styles.wishlistIconActive : styles.wishlistIcon}
-            fill={isWishlisted ? 'currentColor' : 'none'}
-          />
-        </button>
-        <Link
-          href={`/product/${product.slug}`}
-          className={styles.quickViewButton}
-          aria-label={`Xem nhanh sản phẩm ${product.name}`}
-        >
-          Xem nhanh
-        </Link>
-      </div>
-      <div className={styles.info}>
-        <h3 className={styles.name}>{product.name}</h3>
-        <div className={styles.priceSection}>
-          {hasRenderableVariants ? (
-            <>
-              <p className={styles.price}>
-                {formatCurrencyVND(minVariantPrice)} - {formatCurrencyVND(maxVariantPrice)}
-              </p>
-              <div className={styles.variantBadge}>
-                {variants.some((v) => v.stock > 0) ? (
-                  <span className={styles.inStock}>Có sẵn</span>
-                ) : (
-                  <span className={styles.outOfStock}>Hết hàng</span>
-                )}
-              </div>
-            </>
-          ) : (
-            <p className={styles.price}>{formatCurrencyVND(product.price)}</p>
-          )}
+        <Typography.Text className={styles.price}>{displayPrice}</Typography.Text>
+
+        <div className={styles.ratingRow}>
+          <Rate allowHalf disabled value={normalized.rating} className={styles.rate} />
+          <Typography.Text className={styles.ratingText}>
+            {normalized.rating.toFixed(1)}
+          </Typography.Text>
+        </div>
+
+        <div className={styles.ctaWrap}>
+          <Button type="primary" block size="large" onClick={handleAddToCart}>
+            Thêm vào giỏ hàng
+          </Button>
         </div>
       </div>
-    </motion.div>
+    </Card>
   );
 };
 

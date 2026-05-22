@@ -9,6 +9,10 @@ import FilterBar, {
   type SortOption,
 } from '@/components/products/FilterBar';
 
+type ParsedFilters = ProductFilters & {
+  hasPriceFilterSet: boolean;
+};
+
 function getMaxPrice(products: Product[]) {
   return products.reduce((max, p) => Math.max(max, p.price), 0);
 }
@@ -24,7 +28,7 @@ function parseCsv(value: string | null) {
 function parseFiltersFromSearchParams(
   params: URLSearchParams,
   maxPrice: number,
-): ProductFilters {
+): ParsedFilters {
   const sortParam = params.get('sort');
   const sort: SortOption =
     sortParam === 'price-asc' || sortParam === 'price-desc' || sortParam === 'newest'
@@ -33,9 +37,11 @@ function parseFiltersFromSearchParams(
 
   const priceMinParam = Number(params.get('priceMin'));
   const priceMaxParam = Number(params.get('priceMax'));
+  const hasPriceFilterSet = params.has('priceMin') || params.has('priceMax');
 
   return {
     query: params.get('q') ?? '',
+    categories: parseCsv(params.get('categories')),
     collections: parseCsv(params.get('collections')),
     materials: parseCsv(params.get('materials')),
     priceMin: Number.isFinite(priceMinParam) && priceMinParam >= 0 ? priceMinParam : 0,
@@ -44,6 +50,7 @@ function parseFiltersFromSearchParams(
         ? priceMaxParam
         : maxPrice,
     sort,
+    hasPriceFilterSet,
   };
 }
 
@@ -51,6 +58,7 @@ function serializeFiltersToParams(filters: ProductFilters, maxPrice: number) {
   const params = new URLSearchParams();
 
   if (filters.query.trim()) params.set('q', filters.query.trim());
+  if (filters.categories.length > 0) params.set('categories', filters.categories.join(','));
   if (filters.collections.length > 0) params.set('collections', filters.collections.join(','));
   if (filters.materials.length > 0) params.set('materials', filters.materials.join(','));
   if (filters.priceMin > 0) params.set('priceMin', String(filters.priceMin));
@@ -62,6 +70,7 @@ function serializeFiltersToParams(filters: ProductFilters, maxPrice: number) {
 
 function applyFilters(products: Product[], filters: ProductFilters) {
   const q = filters.query.trim().toLowerCase();
+  const selectedCategories = new Set(filters.categories);
   const selectedCollections = new Set(filters.collections);
   const selectedMaterials = new Set(filters.materials);
 
@@ -72,6 +81,10 @@ function applyFilters(products: Product[], filters: ProductFilters) {
     }
 
     if (selectedCollections.size > 0 && !selectedCollections.has(p.collection)) {
+      return false;
+    }
+
+    if (selectedCategories.size > 0 && !selectedCategories.has(p.category)) {
       return false;
     }
 
@@ -118,6 +131,8 @@ export default function ProductDiscoverySection({
     [searchKey, maxPrice],
   );
 
+  const hasPriceFilterSet = filters.hasPriceFilterSet;
+
   const updateFilters = useCallback((nextFilters: ProductFilters) => {
     const nextParams = serializeFiltersToParams(
       {
@@ -135,10 +150,16 @@ export default function ProductDiscoverySection({
   }, [pathname, router, searchKey, maxPrice]);
 
   const filtered = useMemo(() => {
-    return applyFilters(products, {
-      ...filters,
+    const filterObj: ProductFilters = {
+      query: filters.query,
+      categories: filters.categories,
+      collections: filters.collections,
+      materials: filters.materials,
+      priceMin: filters.priceMin,
       priceMax: Math.max(filters.priceMax, maxPrice),
-    });
+      sort: filters.sort,
+    };
+    return applyFilters(products, filterObj);
   }, [products, filters, maxPrice]);
 
   const hasNoResults = !loading && products.length > 0 && filtered.length === 0;
@@ -154,7 +175,7 @@ export default function ProductDiscoverySection({
         </p>
       </div>
 
-      <FilterBar products={products} value={filters} onChange={updateFilters} />
+      <FilterBar products={products} value={filters} onChange={updateFilters} hasPriceFilter={hasPriceFilterSet} />
 
       <div className="mt-8">
         {hasNoResults ? (

@@ -1,32 +1,14 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Plus, Trash2, X } from 'lucide-react';
+import { Drawer, Button, Space, Typography, Empty, Avatar } from 'antd';
+import { MinusOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import styles from './CartDrawer.module.scss';
 import { useCartStore } from '@/store/useCartStore';
 import { useUIStore } from '@/store/useUIStore';
 import { formatCurrencyVND } from '@/store/useCartStore';
 
-const easeLuxury: [number, number, number, number] = [0.43, 0.13, 0.23, 0.96];
-
-const backdropVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-const drawerVariants = {
-  hidden: { x: '100%' },
-  visible: { 
-    x: 0,
-    transition: { duration: 0.5, ease: easeLuxury }
-  },
-  exit: {
-    x: '100%',
-    transition: { duration: 0.4, ease: easeLuxury }
-  }
-};
+const { Title, Text } = Typography;
 
 const CartDrawer = () => {
   const isOpen = useUIStore((s) => s.isCartOpen);
@@ -42,153 +24,81 @@ const CartDrawer = () => {
   const subtotal = totalPrice();
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            className={styles.backdrop}
-            variants={backdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            onClick={closeCart}
-          />
-          <motion.div
-            className={styles.drawer}
-            variants={drawerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <header className={styles.header}>
-              <h2 className={styles.title}>Giỏ hàng</h2>
-              <button type="button" onClick={closeCart} className={styles.closeButton} aria-label="Đóng giỏ hàng">
-                <X size={24} />
-              </button>
-            </header>
-
-            <div className={styles.body}>
-              {cart.length === 0 ? (
-                <div className={styles.emptyMessage}>
-                  <div className="mb-4 grid h-14 w-14 place-items-center rounded-full border border-zinc-200 bg-white">
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M7 7h14l-1.2 7.2a2 2 0 0 1-2 1.6H9.2a2 2 0 0 1-2-1.6L6 3H3"
-                        stroke="#111827"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M9.5 20a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm9 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
-                        stroke="#111827"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-sm leading-6">Giỏ hàng của bạn hiện đang trống.</p>
-                  <Link
-                    href="/#products"
-                    onClick={closeCart}
-                    className="mt-4 inline-flex items-center justify-center rounded-md bg-[#722F37] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#4A1C21]"
-                  >
-                    Quay lại mua sắm
-                  </Link>
-                </div>
-              ) : (
-                <div className={styles.items}>
-                  {cart.map((item) => (
-                    <div key={item.lineId ?? item.product.id} className={styles.item}>
-                      <div className={styles.itemImage}>
-                        <Image
-                          src={item.product.images[0]}
-                          alt={item.product.name}
-                          fill
-                          sizes="96px"
-                        />
-                      </div>
-
-                      <div className={styles.itemInfo}>
-                        <div className={styles.itemTop}>
-                          <div>
-                            <p className={styles.itemName}>{item.product.name}</p>
-                            {item.variantName ? (
-                              <p className={styles.itemVariant}>{item.variantName}</p>
-                            ) : null}
-                            <p className={styles.itemPrice}>
-                              {formatCurrencyVND(item.unitPrice ?? item.product.price)}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            className={styles.removeButton}
-                            onClick={() => removeItem(item.lineId ?? item.product.id)}
-                            aria-label="Xoá sản phẩm"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-
-                        <div className={styles.itemBottom}>
-                          <div className={styles.qtyControls}>
-                            <button
-                              type="button"
-                              className={styles.qtyButton}
-                              onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity - 1)}
-                              aria-label="Giảm số lượng"
-                            >
-                              <Minus size={16} />
-                            </button>
-                            <span className={styles.qtyValue}>{item.quantity}</span>
-                            <button
-                              type="button"
-                              className={styles.qtyButton}
-                              onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity + 1)}
-                              aria-label="Tăng số lượng"
-                              disabled={item.stockLimit !== null && item.quantity >= item.stockLimit}
-                            >
-                              <Plus size={16} />
-                            </button>
-                          </div>
-
-                          <p className={styles.lineTotal}>
-                            {formatCurrencyVND((item.unitPrice ?? item.product.price) * item.quantity)}
-                          </p>
-                        </div>
-                        {item.stockLimit !== null ? (
-                          <p className={styles.stockNote}>Tồn kho khả dụng: {item.stockLimit}</p>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+    <Drawer
+      title={<Title level={4} style={{ margin: 0 }}>Giỏ hàng</Title>}
+      placement="right"
+      onClose={closeCart}
+      open={isOpen}
+      size="default"
+      footer={
+        cart.length > 0 && (
+          <div className={styles.footer}>
+            <div className={styles.subtotal}>
+              <Text type="secondary">Tạm tính</Text>
+              <Title level={4} style={{ margin: 0 }}>{formatCurrencyVND(subtotal)}</Title>
             </div>
-
-            {cart.length > 0 && (
-              <footer className={styles.footer}>
-                <div className={styles.subtotal}>
-                  <span className={styles.label}>Tạm tính</span>
-                  <span className={styles.amount}>{formatCurrencyVND(subtotal)}</span>
-                </div>
-                <Link href="/checkout" className={styles.checkoutButton} onClick={closeCart}>
-                  Thanh toán
-                </Link>
-              </footer>
-            )}
-          </motion.div>
-        </>
+            <Link href="/checkout" onClick={closeCart}>
+              <Button type="primary" block size="large" style={{ marginTop: 16 }}>
+                Thanh toán
+              </Button>
+            </Link>
+          </div>
+        )
+      }
+    >
+      {cart.length === 0 ? (
+        <Empty
+          description="Giỏ hàng của bạn hiện đang trống."
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        >
+          <Link href="/#products" onClick={closeCart}>
+            <Button type="primary">Quay lại mua sắm</Button>
+          </Link>
+        </Empty>
+      ) : (
+        <div className={styles.cartList}>
+          {cart.map((item) => (
+            <div className={styles.cartItem} key={item.lineId ?? item.product.id}>
+              <Avatar
+                shape="square"
+                size={64}
+                src={item.product.images[0]}
+              />
+              <div className={styles.cartInfo}>
+                <Text strong className={styles.cartTitle}>{item.product.name}</Text>
+                <Space orientation="vertical" size={0} className={styles.cartMeta}>
+                  {item.variantName && <Text type="secondary" className={styles.cartVariant}>{item.variantName}</Text>}
+                  <Text>{formatCurrencyVND(item.unitPrice ?? item.product.price)}</Text>
+                </Space>
+              </div>
+              <div className={styles.cartActions}>
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeItem(item.lineId ?? item.product.id)}
+                />
+                <Space size="small">
+                  <Button
+                    size="small"
+                    icon={<MinusOutlined />}
+                    onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity - 1)}
+                  />
+                  <Text>{item.quantity}</Text>
+                  <Button
+                    size="small"
+                    icon={<PlusOutlined />}
+                    onClick={() => updateQuantity(item.lineId ?? item.product.id, item.quantity + 1)}
+                    disabled={item.stockLimit !== null && item.quantity >= item.stockLimit}
+                  />
+                </Space>
+                <Text strong>{formatCurrencyVND((item.unitPrice ?? item.product.price) * item.quantity)}</Text>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
-    </AnimatePresence>
+    </Drawer>
   );
 };
 

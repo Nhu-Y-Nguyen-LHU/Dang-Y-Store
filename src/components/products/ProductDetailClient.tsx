@@ -84,13 +84,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-zinc-600">
         <ol className="flex flex-wrap items-center gap-2">
           <li>
-            <Link href="/" className="hover:text-zinc-900">
+            <Link href="/" className="hover:text-[#722F37]">
               Trang chủ
             </Link>
           </li>
           <li className="text-zinc-400">/</li>
           <li>
-            <Link href="/#products" className="hover:text-zinc-900">
+            <Link href="/#products" className="hover:text-[#722F37]">
               Bộ sưu tập
             </Link>
           </li>
@@ -165,8 +165,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   className={
                     "relative aspect-[3/4] overflow-hidden rounded-md border transition-colors " +
                     (idx === activeIndex
-                      ? "border-zinc-900"
-                      : "border-zinc-200 hover:border-zinc-400")
+                      ? "border-[#722F37]"
+                      : "border-zinc-200 hover:border-[#722F37]")
                   }
                   aria-label={`Xem ảnh ${idx + 1}`}
                 >
@@ -249,8 +249,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 className={
                   'rounded-full px-4 py-2 text-sm transition-colors ' +
                   (activeTab === 'reviews'
-                    ? 'bg-zinc-950 text-white'
-                    : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100')
+                    ? 'bg-[#722F37] text-white'
+                    : 'bg-[#722F37]/10 text-[#4A1C21] hover:bg-[#722F37]/20')
                 }
               >
                 Đánh giá từ khách hàng
@@ -261,8 +261,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 className={
                   'rounded-full px-4 py-2 text-sm transition-colors ' +
                   (activeTab === 'care'
-                    ? 'bg-zinc-950 text-white'
-                    : 'bg-zinc-50 text-zinc-700 hover:bg-zinc-100')
+                    ? 'bg-[#722F37] text-white'
+                    : 'bg-[#722F37]/10 text-[#4A1C21] hover:bg-[#722F37]/20')
                 }
               >
                 Hướng dẫn bảo quản
@@ -308,7 +308,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 Sản phẩm liên quan
               </h2>
             </div>
-            <Link href="/#products" className="text-sm text-zinc-600 hover:text-zinc-900">
+            <Link href="/#products" className="text-sm text-zinc-600 hover:text-[#722F37]">
               Xem tất cả →
             </Link>
           </div>

@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
-import type { Product } from '@/types/product';
+import { useMemo, useState } from 'react';
+import { Input, Select, Button, Drawer, Checkbox, Slider, Row, Col, Typography, Space, Badge } from 'antd';
+import { SearchOutlined, FilterOutlined, ReloadOutlined } from '@ant-design/icons';
 import { formatCurrencyVND } from '@/store/useCartStore';
-import styles from './FilterBar.module.scss';
+
+const { Title, Text } = Typography;
 
 export type SortOption = 'newest' | 'price-asc' | 'price-desc';
 
 export type ProductFilters = {
   query: string;
+  categories: string[];
   collections: string[];
   materials: string[];
   priceMin: number;
@@ -21,269 +23,95 @@ type FilterBarProps = {
   products: Product[];
   value: ProductFilters;
   onChange: (next: ProductFilters) => void;
+  hasPriceFilter?: boolean;
 };
 
-function clamp(n: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, n));
-}
+import type { Product } from '@/types/product';
 
-export default function FilterBar({ products, value, onChange }: FilterBarProps) {
+export default function FilterBar({ products, value, onChange, hasPriceFilter = false }: FilterBarProps) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [isSuggestOpen, setIsSuggestOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const collections = useMemo(() => {
     const set = new Set(products.map((p) => p.collection).filter(Boolean));
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'vi'));
   }, [products]);
 
+  const categories = useMemo(() => {
+    const set = new Set(products.map((p) => p.category).filter(Boolean));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'vi'));
+  }, [products]);
+
   const filterMaterials = useMemo(() => {
-    return ['Vàng', 'Bạc', 'Kim cương'];
-  }, []);
+    const set = new Set(products.flatMap((p) => p.materials ?? []));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'vi'));
+  }, [products]);
 
   const maxPrice = useMemo(() => {
     return products.reduce((max, p) => Math.max(max, p.price), 0);
   }, [products]);
 
-  const suggestions = useMemo(() => {
-    const q = value.query.trim().toLowerCase();
-    if (!q) return [];
-
-    return products
-      .filter((p) => {
-        const haystack = `${p.name} ${p.category} ${p.collection}`.toLowerCase();
-        return haystack.includes(q);
-      })
-      .slice(0, 6);
-  }, [products, value.query]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsSuggestOpen(false);
-        setIsFiltersOpen(false);
-        inputRef.current?.blur();
-      }
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
-
   const update = (patch: Partial<ProductFilters>) => {
     onChange({ ...value, ...patch });
   };
 
-  const toggleArrayValue = (
-    key: 'collections' | 'materials',
-    item: string,
-  ) => {
-    const current = value[key];
-    const next = current.includes(item)
-      ? current.filter((x) => x !== item)
-      : [...current, item];
-
-    if (key === 'collections') {
-      update({ collections: next });
-      return;
-    }
-
-    update({ materials: next });
-  };
-
-  const priceMin = clamp(value.priceMin, 0, Math.max(0, value.priceMax));
-  const priceMax = clamp(value.priceMax, Math.max(0, value.priceMin), maxPrice);
-  const hasCustomPrice = priceMin > 0 || priceMax < maxPrice;
   const activeFilterCount =
-    value.collections.length + value.materials.length + (hasCustomPrice ? 1 : 0);
-
-  useEffect(() => {
-    if (priceMin !== value.priceMin || priceMax !== value.priceMax) {
-      update({ priceMin, priceMax });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceMin, priceMax]);
-
-  const isSuggestionPanelVisible = isSuggestOpen && suggestions.length > 0;
-  const isBackdropVisible = isFiltersOpen || isSuggestionPanelVisible;
+    value.categories.length + value.collections.length + value.materials.length + (hasPriceFilter ? 1 : 0);
 
   return (
-    <div className={styles.wrapper}>
-      {isBackdropVisible && (
-        <button
-          type="button"
-          className={styles.backdrop}
-          onClick={() => {
-            setIsSuggestOpen(false);
-            setIsFiltersOpen(false);
-          }}
-          aria-label="Đóng"
-        />
-      )}
-
-      <div className={styles.topRow}>
-        <div className={styles.searchWrap}>
-          <input
-            ref={inputRef}
-            value={value.query}
-            onChange={(e) => {
-              update({ query: e.target.value });
-              setIsSuggestOpen(Boolean(e.target.value.trim()));
-            }}
-            onFocus={() => setIsSuggestOpen(Boolean(value.query.trim()))}
+    <div style={{ marginBottom: 24 }}>
+      <Row gutter={[16, 16]} align="middle">
+        <Col xs={24} md={12} lg={14}>
+          <Input
+            size="large"
             placeholder="Tìm kiếm theo tên, bộ sưu tập…"
-            className={styles.searchInput}
-            aria-label="Tìm kiếm sản phẩm"
-            autoComplete="off"
+            prefix={<SearchOutlined />}
+            value={value.query}
+            onChange={(e) => update({ query: e.target.value })}
+            allowClear
           />
-
-          {isSuggestionPanelVisible && (
-            <div className={styles.suggestionPanel} role="listbox">
-              <div className={styles.suggestionHeader}>Gợi ý</div>
-              <div className={styles.suggestionList}
-              >
-                {suggestions.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/product/${p.slug}`}
-                    className={styles.suggestionItem}
-                    onClick={() => setIsSuggestOpen(false)}
-                  >
-                    <span className={styles.suggestionName}>{p.name}</span>
-                    <span className={styles.suggestionPrice}>
-                      {formatCurrencyVND(p.price)}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.actions}>
-          <label className={styles.sortWrap}>
-            <span className={styles.sortLabel}>Sắp xếp</span>
-            <select
-              className={styles.sortSelect}
-              value={value.sort}
-              onChange={(e) => update({ sort: e.target.value as SortOption })}
-              aria-label="Sắp xếp"
+        </Col>
+        <Col xs={14} md={8} lg={6}>
+          <Select
+            size="large"
+            style={{ width: '100%' }}
+            value={value.sort}
+            onChange={(val) => update({ sort: val as SortOption })}
+            options={[
+              { label: 'Mới nhất', value: 'newest' },
+              { label: 'Giá tăng dần', value: 'price-asc' },
+              { label: 'Giá giảm dần', value: 'price-desc' },
+            ]}
+          />
+        </Col>
+        <Col xs={10} md={4} lg={4}>
+          <Badge count={activeFilterCount} size="small" offset={[-5, 5]}>
+            <Button
+              size="large"
+              block
+              icon={<FilterOutlined />}
+              onClick={() => setIsFiltersOpen(true)}
             >
-              <option value="newest">Mới nhất</option>
-              <option value="price-asc">Giá tăng dần</option>
-              <option value="price-desc">Giá giảm dần</option>
-            </select>
-          </label>
+              Bộ lọc
+            </Button>
+          </Badge>
+        </Col>
+      </Row>
 
-          <button
-            type="button"
-            className={styles.filterButton}
-            onClick={() => setIsFiltersOpen(true)}
-          >
-            Bộ lọc {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
-          </button>
-        </div>
-      </div>
-
-      {activeFilterCount > 0 && (
-        <div className={styles.filterHint}>
-          Đang áp dụng {activeFilterCount} tiêu chí lọc.
-        </div>
-      )}
-
-      <aside
-        className={`${styles.sidebar} ${isFiltersOpen ? styles.sidebarOpen : ''}`}
-        aria-label="Bộ lọc"
-      >
-        <div className={styles.sidebarHeader}>
-          <div className={styles.sidebarTitle}>Bộ lọc</div>
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={() => setIsFiltersOpen(false)}
-            aria-label="Đóng bộ lọc"
-          >
-            Đóng
-          </button>
-        </div>
-
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>Bộ sưu tập</div>
-          <div className={styles.checkboxGrid}>
-            {collections.map((c) => (
-              <label key={c} className={styles.checkboxRow}>
-                <input
-                  type="checkbox"
-                  checked={value.collections.includes(c)}
-                  onChange={() => toggleArrayValue('collections', c)}
-                />
-                <span>{c}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>Chất liệu</div>
-          <div className={styles.checkboxGrid}>
-            {filterMaterials.map((m) => (
-              <label key={m} className={styles.checkboxRow}>
-                <input
-                  type="checkbox"
-                  checked={value.materials.includes(m)}
-                  onChange={() => toggleArrayValue('materials', m)}
-                />
-                <span>{m}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <div className={styles.sectionTitle}>Khoảng giá</div>
-          <div className={styles.rangeMeta}>
-            <span>{formatCurrencyVND(priceMin)}</span>
-            <span className={styles.rangeDash}>—</span>
-            <span>{formatCurrencyVND(priceMax)}</span>
-          </div>
-
-          <div className={styles.rangeWrap}>
-            <input
-              type="range"
-              min={0}
-              max={maxPrice}
-              step={10000}
-              value={priceMin}
-              onChange={(e) =>
-                update({ priceMin: Number(e.target.value) })
-              }
-              className={styles.range}
-              aria-label="Giá tối thiểu"
-            />
-            <input
-              type="range"
-              min={0}
-              max={maxPrice}
-              step={10000}
-              value={priceMax}
-              onChange={(e) =>
-                update({ priceMax: Number(e.target.value) })
-              }
-              className={styles.range}
-              aria-label="Giá tối đa"
-            />
-          </div>
-        </div>
-
-        <div className={styles.sidebarFooter}>
-          <p className={styles.footerHint}>Mẹo: bộ lọc được áp dụng ngay khi bạn chọn.</p>
-          <div className={styles.footerActions}>
-            <button
-              type="button"
-              className={styles.resetButton}
+      <Drawer
+        title="Bộ lọc sản phẩm"
+        placement="right"
+        size="large"
+        onClose={() => setIsFiltersOpen(false)}
+        open={isFiltersOpen}
+        footer={
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Button
+              block
+              icon={<ReloadOutlined />}
               onClick={() =>
                 onChange({
                   query: '',
+                  categories: [],
                   collections: [],
                   materials: [],
                   priceMin: 0,
@@ -293,17 +121,63 @@ export default function FilterBar({ products, value, onChange }: FilterBarProps)
               }
             >
               Đặt lại
-            </button>
-            <button
-              type="button"
-              className={styles.applyButton}
-              onClick={() => setIsFiltersOpen(false)}
-            >
-              Xong
-            </button>
+            </Button>
+            <Button type="primary" block onClick={() => setIsFiltersOpen(false)}>
+              Xem kết quả
+            </Button>
           </div>
-        </div>
-      </aside>
+        }
+      >
+        <Space orientation="vertical" size={32} style={{ width: '100%' }}>
+          <div>
+            <Title level={5}>Danh mục</Title>
+            <Checkbox.Group
+              options={categories}
+              value={value.categories}
+              onChange={(vals) => update({ categories: vals as string[] })}
+              style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+            />
+          </div>
+
+          <div>
+            <Title level={5}>Bộ sưu tập</Title>
+            <Checkbox.Group
+              options={collections}
+              value={value.collections}
+              onChange={(vals) => update({ collections: vals as string[] })}
+              style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+            />
+          </div>
+
+          <div>
+            <Title level={5}>Chất liệu</Title>
+            <Checkbox.Group
+              options={filterMaterials}
+              value={value.materials}
+                onChange={(vals) => update({ materials: vals as string[] })}
+              style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+            />
+          </div>
+
+          <div>
+            <Title level={5}>Khoảng giá</Title>
+            <div style={{ marginBottom: 16 }}>
+              <Text strong>{formatCurrencyVND(value.priceMin)}</Text>
+              <Text type="secondary"> — </Text>
+              <Text strong>{formatCurrencyVND(value.priceMax)}</Text>
+            </div>
+            <Slider
+              range
+              min={0}
+              max={maxPrice}
+              step={10000}
+              value={[value.priceMin, value.priceMax]}
+              onChange={([min, max]) => update({ priceMin: min, priceMax: max })}
+              tooltip={{ formatter: (val) => formatCurrencyVND(val || 0) }}
+            />
+          </div>
+        </Space>
+      </Drawer>
     </div>
   );
 }
