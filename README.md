@@ -54,39 +54,69 @@ Luồng mua sắm được thiết kế liền mạch theo phễu chuyển đổ
 
 ---
 
-## 🚀 Hướng dẫn Cài đặt & Khởi chạy (Localhost)
+# 🚀 Hướng dẫn Cài đặt & Khởi chạy (Localhost)
 
 Để chạy dự án trên môi trường cục bộ, máy tính của bạn cần cài đặt sẵn **Node.js (>= 20.x)**.
 
-**Bước 1: Clone mã nguồn về máy**
-Bash
-git clone [https://github.com/Nhu-Y-Nguyen-LHU/Dang-Y-Store.git]
+---
+
+## Bước 1: Clone mã nguồn về máy
+
+```bash
+git clone https://github.com/Nhu-Y-Nguyen-LHU/Dang-Y-Store.git
 cd Dang-Y-Store
+```
 
-Bước 2: Cài đặt các gói phụ thuộc (Dependencies)
-Bash
+---
+
+## Bước 2: Cài đặt các gói phụ thuộc (Dependencies)
+
+```bash
 npm install
+```
 
-Bước 3: Khởi chạy máy chủ phát triển
-Bash
+---
+
+## Bước 3: Khởi chạy máy chủ phát triển
+
+```bash
 npm run dev
+```
 
-Bước 4: Trải nghiệm ứng dụng
-Mở trình duyệt web và truy cập vào địa chỉ: http://localhost:3000
+---
 
-🎥 Video Demo & Báo cáo
-Video Hướng dẫn & Demo: https://drive.google.com/drive/folders/116KlrZRK0XaNkEDqD-qW8jzB3Yvuyvz3?usp=drive_link
+## Bước 4: Trải nghiệm ứng dụng
 
-Tài liệu báo cáo: File Word báo cáo giữa kỳ đính kèm trong hồ sơ nộp bài.
+Mở trình duyệt web và truy cập địa chỉ:
 
-📦 Dang-Y-Store
- ┣ 📂 app
- ┃ ┣ 📂 (routes)          # Các trang chính (home, about, checkout)
- ┃ ┣ 📂 api               # Mock API (Route Handlers)
- ┃ ┣ 📂 products          # Danh sách sản phẩm
- ┃ ┃ ┗ 📂 [slug]          # Dynamic Route cho trang chi tiết
- ┃ ┣ 📜 layout.tsx        # Layout tổng
- ┃ ┗ 📜 page.tsx          # Trang chủ
- ┣ 📂 components          # React Components (Header, Footer, Card)
- ┣ 📂 store               # Zustand Store (useCartStore.ts)
- ┗ 📜 tailwind.config.ts  # Cấu hình UI
+```txt
+http://localhost:3000
+```
+
+---
+
+# 🎥 Video Demo & Báo cáo
+
+- Video Hướng dẫn & Demo:  
+  https://drive.google.com/drive/folders/116KlrZRK0XaNkEDqD-qW8jzB3Yvuyvz3?usp=drive_link
+
+- Tài liệu báo cáo:  
+  File Word báo cáo giữa kỳ đính kèm trong hồ sơ nộp bài.
+
+---
+
+# 📦 Cấu trúc thư mục dự án
+
+```txt
+Dang-Y-Store
+┣ 📂 app
+┃ ┣ 📂 (routes)         # Các trang chính (home, about, checkout)
+┃ ┣ 📂 api              # Mock API (Route Handlers)
+┃ ┣ 📂 products
+┃ ┃ ┗ 📂 [slug]         # Dynamic Route cho trang chi tiết
+┃ ┣ 📜 layout.tsx       # Layout tổng
+┃ ┗ 📜 page.tsx         # Trang chủ
+┣ 📂 components         # React Components (Header, Footer, Card)
+┣ 📂 store              # Zustand Store (useCartStore.ts)
+┗ 📜 tailwind.config.ts # Cấu hình UI
+```
