@@ -8,6 +8,8 @@ import { useCartStore, formatCurrencyVND } from '@/store/useCartStore';
 
 const { Title, Text, Paragraph } = Typography;
 
+type PaymentMethod = 'card' | 'bank' | 'cod';
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [form] = Form.useForm();
@@ -162,27 +164,27 @@ export default function CheckoutPage() {
                       <Radio.Button value="card" style={{ width: '100%', height: 'auto', padding: 16 }}>
                         <Text strong>Thẻ tín dụng</Text>
                         <br />
-                        <Text type="secondary" size="small">Visa / MasterCard</Text>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>Visa / MasterCard</Text>
                       </Radio.Button>
                     </Col>
                     <Col span={8}>
                       <Radio.Button value="bank" style={{ width: '100%', height: 'auto', padding: 16 }}>
                         <Text strong>Chuyển khoản</Text>
                         <br />
-                        <Text type="secondary" size="small">QR (giả lập)</Text>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>QR (giả lập)</Text>
                       </Radio.Button>
                     </Col>
                     <Col span={8}>
                       <Radio.Button value="cod" style={{ width: '100%', height: 'auto', padding: 16 }}>
                         <Text strong>COD</Text>
                         <br />
-                        <Text type="secondary" size="small">Thanh toán khi nhận</Text>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>Thanh toán khi nhận</Text>
                       </Radio.Button>
                     </Col>
                   </Row>
                 </Radio.Group>
 
-                <Card bg-zinc-50>
+                <Card className="bg-zinc-50">
                   {paymentMethod === 'card' && (
                     <Space orientation="vertical" size={16} style={{ width: '100%' }}>
                       <Text type="secondary">THÔNG TIN THẺ (GIẢ LẬP)</Text>

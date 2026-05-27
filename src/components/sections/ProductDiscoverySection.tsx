@@ -145,7 +145,8 @@ export default function ProductDiscoverySection({
 
     if (nextSearch !== searchKey) {
       const nextUrl = nextSearch ? `${pathname}?${nextSearch}` : pathname;
-      router.push(nextUrl, { scroll: false });
+      // ÉP BUỘC TẢI LẠI TRANG CỨNG (Hard Reload) trên trang chủ để đồng bộ chuẩn xác:
+      window.location.href = nextUrl;
     }
   }, [pathname, router, searchKey, maxPrice]);
 
@@ -162,17 +163,58 @@ export default function ProductDiscoverySection({
     return applyFilters(products, filterObj);
   }, [products, filters, maxPrice]);
 
+  const categories = useMemo(() => {
+    const set = new Set(products.map((p) => p.category).filter(Boolean));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'vi'));
+  }, [products]);
+
+  const toggleCategory = (category: string) => {
+    const current = filters.categories;
+    const next = current.includes(category)
+      ? current.filter((c) => c !== category)
+      : [...current, category];
+    updateFilters({ ...filters, categories: next });
+  };
+
   const hasNoResults = !loading && products.length > 0 && filtered.length === 0;
 
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-10">
-      <div className="mb-6">
+      <div className="mb-8">
         <h2 className="font-serif text-2xl tracking-tight text-zinc-950">
           Tuyển chọn của Dáng Ý
         </h2>
         <p className="mt-2 text-sm text-zinc-600">
           Tìm đúng món đồ phù hợp với phong cách và khoảnh khắc của bạn.
         </p>
+      </div>
+
+      <div className="mb-8 overflow-x-auto">
+        <div className="flex gap-3 pb-2 min-w-max">
+          <button
+            onClick={() => updateFilters({ ...filters, categories: [] })}
+            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
+              filters.categories.length === 0
+                ? 'bg-[#722F37] text-white border-[#722F37]'
+                : 'bg-white text-zinc-600 border-zinc-200 hover:border-[#722F37] hover:text-[#722F37]'
+            }`}
+          >
+            Tất cả
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => toggleCategory(cat)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
+                filters.categories.includes(cat)
+                  ? 'bg-[#722F37] text-white border-[#722F37]'
+                  : 'bg-white text-zinc-600 border-zinc-200 hover:border-[#722F37] hover:text-[#722F37]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       <FilterBar products={products} value={filters} onChange={updateFilters} hasPriceFilter={hasPriceFilterSet} />

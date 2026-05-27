@@ -21,6 +21,7 @@ export type PublicApiProduct = {
 interface ProductCardProps {
   product: Product | PublicApiProduct;
   currency?: 'USD' | 'VND';
+  priority?: boolean; // Thuộc tính tối ưu ảnh LCP (True cho các sản phẩm màn hình đầu)
 }
 
 function isInternalProduct(product: Product | PublicApiProduct): product is Product {
@@ -63,7 +64,7 @@ function toCartProduct(normalized: {
   };
 }
 
-const ProductCard = ({ product, currency }: ProductCardProps) => {
+const ProductCard = ({ product, currency, priority = false }: ProductCardProps) => {
   const addItem = useCartStore((s) => s.addItem);
 
   const normalized = useMemo(() => {
@@ -74,7 +75,7 @@ const ProductCard = ({ product, currency }: ProductCardProps) => {
         image:
           Array.isArray(product.images) && product.images.length > 0
             ? product.images[0]
-            : `/images/categories/${(product.category || 'default').toLowerCase().replace(/\s+/g, '-')}.jpg`, // Ensure default category is used if null
+            : `/images/categories/${(product.category || 'default').toLowerCase().replace(/\s+/g, '-')}.jpg`,
         price: product.price,
         rating: 4.8,
         currency: (currency ?? 'VND') as 'USD' | 'VND',
@@ -112,10 +113,12 @@ const ProductCard = ({ product, currency }: ProductCardProps) => {
               src={normalized.image}
               alt={normalized.title}
               fill
+              priority={priority} // Kích hoạt nạp trước cho ảnh màn hình đầu
               className={styles.productImage}
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+              // Cấu hình sizes chuẩn Responsive Web Design giúp trình duyệt chọn kích thước ảnh nhỏ nhất phù hợp
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               onError={(e) => {
-                e.currentTarget.src = '/images/categories/default_real.jpg'; // Fallback to default image if the category-specific image is missing
+                e.currentTarget.src = '/images/categories/default_real.jpg';
               }}
             />
           </Link>

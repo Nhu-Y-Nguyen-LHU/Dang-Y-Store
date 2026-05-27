@@ -4,27 +4,19 @@ import { Breadcrumb, Card, Col, Rate, Row, Space, Tag, Typography } from 'antd';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProductPurchasePanel from '@/components/products/ProductPurchasePanel';
-import { formatUSD } from '@/lib/utils';
+import { formatVND } from '@/lib/utils';
+import { Product } from '@/types/product';
 import styles from './product-detail.module.scss';
 
 const { Title, Text, Paragraph } = Typography;
 
 interface ProductDetailViewProps {
-  product: {
-    id: number | string;
-    title: string;
-    price: number;
-    description: string;
-    category: string;
-    image: string;
-    rating: {
-      rate: number;
-      count: number;
-    };
-  };
+  product: Product;
 }
 
 export default function ProductDetailView({ product }: ProductDetailViewProps) {
+  const mainImage = product.images[0] || '';
+
   return (
     <div className={styles.page}>
       <Breadcrumb
@@ -41,8 +33,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
           <Col xs={24} md={12}>
             <div className={styles.imageWrap}>
               <Image
-                src={product.image}
-                alt={product.title}
+                src={mainImage}
+                alt={product.name}
                 fill
                 className={styles.image}
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -55,17 +47,18 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
             <Space orientation="vertical" size={6} style={{ width: '100%' }}>
               <Tag>{product.category}</Tag>
               <Title level={2} className={styles.title}>
-                {product.title}
+                {product.name}
               </Title>
               <Text className={styles.price}>
-                {formatUSD(product.price)}
+                {formatVND(product.price)}
               </Text>
 
+              {/* Mock rating since Product type doesn't have it yet */}
               <div className={styles.rating}>
                 <Space align="center" size={10}>
-                  <Rate allowHalf disabled value={product.rating?.rate ?? 0} />
+                  <Rate allowHalf disabled value={4.5} />
                   <Text type="secondary">
-                    {(product.rating?.rate ?? 0).toFixed(1)} ({product.rating?.count ?? 0} đánh giá)
+                    4.5 (24 đánh giá)
                   </Text>
                 </Space>
               </div>
@@ -78,9 +71,9 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               <Text className={styles.label}>Số lượng</Text>
               <ProductPurchasePanel
                 id={String(product.id)}
-                title={product.title}
+                title={product.name}
                 price={product.price}
-                image={product.image}
+                image={mainImage}
                 category={product.category}
                 description={product.description}
               />

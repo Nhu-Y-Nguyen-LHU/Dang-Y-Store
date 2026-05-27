@@ -1,122 +1,120 @@
 <div align="center">
   <h1 align="center">🛍️ Dáng Ý Store - E-Commerce Platform</h1>
   <p align="center">
-    <strong>Đồ án Giữa kỳ môn Lập trình Front-End | Đại học Lạc Hồng</strong>
+    <strong>Đồ án Tốt nghiệp / Cuối kỳ môn Lập trình Front-End nâng cao | Đại học Lạc Hồng</strong>
   </p>
   <p align="center">
-    <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
-    <img src="https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react" alt="React" />
-    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/Ant_Design-0170FE?style=for-the-badge&logo=antdesign&logoColor=white" alt="Ant Design" />
-    <img src="https://img.shields.io/badge/Zustand-Bear-orange?style=for-the-badge" alt="Zustand" />
+    <img src="https://img.shields.io/badge/Next.js-16.2.4-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+    <img src="https://img.shields.io/badge/React-19.2.4-blue?style=for-the-badge&logo=react" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-5.x-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Supabase-BaaS-active?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+    <img src="https://img.shields.io/badge/NextAuth.js-4.x-violet?style=for-the-badge" alt="NextAuth" />
   </p>
 </div>
 
 ---
 
-> *"Sự kết hợp giữa hiệu năng Server-First của Next.js và trải nghiệm tương tác mượt mà phía Client."*
+> *"Sự kết hợp hoàn hảo giữa hiệu năng Server-First của Next.js, hệ thống Cơ sở dữ liệu Supabase BaaS mạnh mẽ và Cơ chế đồng bộ giỏ hàng thông minh bậc cao."*
 
-## 📖 Giới thiệu dự án
+## 📖 Giới thiệu Dự án
 
-**Dáng Ý Store** là một giải pháp Front-end cho hệ thống bán lẻ trực tuyến, hướng đến tệp khách hàng Gen Z và dân văn phòng. Dự án giải quyết bài toán cân bằng giữa việc **Tối ưu hóa công cụ tìm kiếm (SEO)** thông qua Server-Side Rendering (SSR) và **Trải nghiệm tương tác thời gian thực (Real-time UX)**.
+**Dáng Ý Store** là một ứng dụng Thương mại điện tử thời trang thuần Việt, tập trung tối đa vào trải nghiệm người dùng cao cấp (Premium UX), hiệu năng vượt trội và tính bảo mật cấp hệ thống. 
 
-Luồng mua sắm được thiết kế liền mạch theo phễu chuyển đổi: từ khám phá danh mục, lọc sản phẩm động, tùy chọn biến thể phức tạp, đến quản lý giỏ hàng toàn cục (Global Cart).
+Trong giai đoạn cuối kỳ, dự án đã thực hiện bước nhảy vọt về mặt kỹ thuật: **Chuyển đổi hoàn toàn từ Mock dữ liệu tĩnh sang tích hợp đám mây Supabase BaaS real-time**, áp dụng cơ chế xác thực **NextAuth.js**, xử lý triệt để các trạng thái bất đồng bộ (**Suspense & Skeleton Streaming**), và phát triển thuật toán **Đồng bộ hóa giỏ hàng thông minh (Cart Merge Strategy)**.
 
 ---
 
-## 👥 Đội ngũ Phát triển
+## ✨ Điểm Sáng Kỹ Thuật (Technical Highlights)
 
-| Vai trò | Thực hiện | Mô tả công việc |
+*   ⚡ **Full-stack React Server Components (RSC):** Tải trước dữ liệu tĩnh trên Server, tối ưu hóa công cụ tìm kiếm (SEO) và tối đa hóa điểm hiệu năng **First Contentful Paint (FCP)**.
+*   🔄 **BaaS Supabase Integration:** Đồng bộ thời gian thực bảng sản phẩm và giỏ hàng thông qua Rest API (PostgREST) được kiểm soát bởi cơ chế cache CDN nâng cao.
+*   🚀 **React Suspense & Skeleton Streaming:** Tải phân đoạn dữ liệu, hiển thị bộ khung Skeleton nhấp nháy chuyên nghiệp bằng Tailwind CSS giúp giảm tỷ lệ thoát trang do cảm giác chờ đợi (Perceived Latency).
+*   🔐 **Secure Authentication (NextAuth.js):** Xác thực an toàn thông qua Google OAuth và cơ chế Credentials lưu phiên không trạng thái (Stateless JWT).
+*   🛒 **Smart Cart Merge (Custom Hook):** Thuật toán tự động cộng dồn giỏ hàng lưu trữ tạm thời (Zustand & LocalStorage) lên Cloud DB khi người dùng đăng nhập thành công, khống chế số lượng theo tồn kho thực tế (`stockLimit`).
+
+---
+
+## 🛠 Tech Stack Chi Tiết
+
+| Phân nhóm | Công nghệ lựa chọn | Vai trò & Mục tiêu kiểm soát |
 | :--- | :--- | :--- |
-| **Full Stack** | **Nguyễn Thị Như Ý** | Xây dựng kiến trúc Next.js, thiết kế UI/UX, tích hợp API Mocking và quản lý Global State (Zustand). |
+| **Framework** | Next.js 16 (App Router) | Xây dựng kiến trúc phân cấp trang, tối ưu hoá SSR và Server-side API. |
+| **Cơ sở dữ liệu** | Supabase BaaS | Hệ quản trị cơ sở dữ liệu Postgres bảo mật, lưu trữ thông tin sản phẩm và giỏ hàng. |
+| **Xác thực** | NextAuth.js | Quản lý phiên đăng nhập và định danh người dùng qua JWT/OAuth. |
+| **State Manager**| Zustand | Quản lý trạng thái Giỏ hàng phía Client mượt mà, lưu vết tại LocalStorage. |
+| **UI & Styling** | Tailwind CSS v4 & Ant Design | Thiết kế giao diện Glassmorphism cao cấp kết hợp các component UI phức tạp. |
+| **Ngôn ngữ** | TypeScript | Kiểm soát chặt chẽ kiểu dữ liệu, triệt tiêu lỗi Runtime ẩn. |
 
 ---
 
-## ✨ Chức năng cốt lõi (Core Features)
+## 📦 Cấu trúc Thư mục Dự án
 
-- ⚡ **Tối ưu SEO & Tốc độ tải:** Áp dụng kiến trúc React Server Components (RSC) cho Trang chủ và Trang chi tiết sản phẩm.
-- 🛒 **Global Dynamic Cart:** Quản lý giỏ hàng bằng trạng thái toàn cục (Zustand) tích hợp dạng Drawer trượt, cho phép cập nhật tức thì mà không cần tải lại trang.
-- 🔍 **Lọc & Tìm kiếm thông minh:** Bộ lọc `FilterBar` tương tác phía Client, mang lại cảm giác phản hồi nhanh chóng khi duyệt danh mục.
-- 🎨 **Responsive 100%:** Hiển thị hoàn hảo và giữ nguyên tỷ lệ cấu trúc trên cả Mobile, Tablet và Desktop.
-
----
-
-## 🛠 Công nghệ sử dụng
-
-| Hạng mục | Công nghệ | Mục đích |
-| :--- | :--- | :--- |
-| **Core Framework** | Next.js 16 (App Router) | Xây dựng kiến trúc hệ thống, Routing, SSR/SSG. |
-| **Ngôn ngữ** | TypeScript | Ràng buộc kiểu dữ liệu tĩnh, giảm thiểu lỗi runtime. |
-| **UI & Styling** | Tailwind CSS v4, Ant Design 6 | Quản lý bố cục linh hoạt và sử dụng các component phức tạp. |
-| **State Management**| Zustand | Quản lý trạng thái Giỏ hàng gọn nhẹ, tránh re-render thừa. |
-| **API & Data** | Next.js Route Handlers | Thiết lập API Mock chuẩn RESTful (`/api/products`). |
-
----
-
-# 🚀 Hướng dẫn Cài đặt & Khởi chạy (Localhost)
-
-Để chạy dự án trên môi trường cục bộ, máy tính của bạn cần cài đặt sẵn **Node.js (>= 20.x)**.
-
----
-
-## Bước 1: Clone mã nguồn về máy
-
-```bash
-git clone https://github.com/Nhu-Y-Nguyen-LHU/Dang-Y-Store.git
-cd Dang-Y-Store
+```txt
+my-app
+┣ 📂 src
+┃ ┣ 📂 app
+┃ ┃ ┣ 📂 api                    # Thư mục chứa các API Route Handlers
+┃ ┃ ┃ ┣ 📂 auth
+┃ ┃ ┃ ┃ ┗ 📂 [...nextauth]      # Cấu hình NextAuth (Credentials & Google)
+┃ ┃ ┃ ┗ 📂 products             # API GET lấy sản phẩm từ Supabase
+┃ ┃ ┣ 📂 products               # Trang Danh sách sản phẩm
+┃ ┃ ┃ ┣ 📂 [id]                 # Dynamic Route cho trang chi tiết
+┃ ┃ ┃ ┣ 📜 loading.tsx          # Tailwind Skeleton Loader phân đoạn
+┃ ┃ ┃ ┣ 📜 error.tsx            # Error Boundary phục hồi thông minh
+┃ ┃ ┃ ┗ 📜 page.tsx             # Trang danh sách tích hợp Suspense
+┃ ┃ ┣ 📜 layout.tsx             # Root Layout bao bọc Auth & UI Providers
+┃ ┃ ┗ 📜 page.tsx               # Trang chủ Dáng Ý Store
+┃ ┣ 📂 components               # Các thành phần tái sử dụng (Header, Card, Skeletons)
+┃ ┣ 📂 hooks                    # Custom Hooks (useCartSync, useHasHydrated)
+┃ ┣ 📂 lib                      # Cấu hình thư viện kết nối (Supabase Client, utils)
+┃ ┣ 📂 store                    # Quản lý State toàn cục bằng Zustand (useCartStore)
+┃ ┣ 📂 types                    # Khai báo kiểu dữ liệu tĩnh của TypeScript
+┃ ┗ 📂 styles                   # Chứa CSS & SCSS tùy biến
+┣ 📜 .env.local                 # File cấu hình biến môi trường cục bộ (Bảo mật)
+┗ 📜 package.json               # Quản lý các gói phụ thuộc dự án
 ```
 
 ---
 
-## Bước 2: Cài đặt các gói phụ thuộc (Dependencies)
+## 🚀 Hướng Dẫn Cài Đặt & Chạy Thử (Localhost)
 
+Yêu cầu môi trường tối thiểu: **Node.js phiên bản >= 20.x** và **NPM >= 10.x**.
+
+### Bước 1: Tải mã nguồn về máy cục bộ
+```bash
+git clone https://github.com/your-username/Dang-Y-Store.git
+cd Dang-Y-Store/my-app
+```
+
+### Bước 2: Cài đặt toàn bộ các thư viện phụ thuộc
 ```bash
 npm install
 ```
 
----
+### Bước 3: Cấu hình tệp biến môi trường `.env.local`
+Tạo file `.env.local` tại thư mục gốc của dự án `my-app/` và nhập thông tin kết nối sau:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+NEXTAUTH_SECRET=dang-y-store-secret-key-2026
+```
 
-## Bước 3: Khởi chạy máy chủ phát triển
-
+### Bước 4: Chạy dự án ở chế độ Phát triển (Dev Mode)
 ```bash
 npm run dev
 ```
+Truy cập trình duyệt tại địa chỉ: [http://localhost:3000](http://localhost:3000)
 
----
-
-## Bước 4: Trải nghiệm ứng dụng
-
-Mở trình duyệt web và truy cập địa chỉ:
-
-```txt
-http://localhost:3000
+### Bước 5: Kiểm tra tính an toàn của TypeScript trước khi Deploy
+```bash
+npx tsc --noEmit
 ```
 
 ---
 
-# 🎥 Video Demo & Báo cáo
-
-- Video Hướng dẫn & Demo:  
-  https://drive.google.com/drive/folders/116KlrZRK0XaNkEDqD-qW8jzB3Yvuyvz3?usp=drive_link
-
-- Tài liệu báo cáo:  
-  File Word báo cáo giữa kỳ đính kèm trong hồ sơ nộp bài.
-
----
-
-# 📦 Cấu trúc thư mục dự án
-
-```txt
-Dang-Y-Store
-┣ 📂 app
-┃ ┣ 📂 (routes)         # Các trang chính (home, about, checkout)
-┃ ┣ 📂 api              # Mock API (Route Handlers)
-┃ ┣ 📂 products
-┃ ┃ ┗ 📂 [slug]         # Dynamic Route cho trang chi tiết
-┃ ┣ 📜 layout.tsx       # Layout tổng
-┃ ┗ 📜 page.tsx         # Trang chủ
-┣ 📂 components         # React Components (Header, Footer, Card)
-┣ 📂 store              # Zustand Store (useCartStore.ts)
-┗ 📜 tailwind.config.ts # Cấu hình UI
-```
+## 👥 Tác giả & Người thực hiện
+*   **Thực hiện:** Nguyễn Thị Như Ý
+*   **Đề tài:** Phát triển giao diện Front-End cho hệ thống thương mại điện tử Dáng Ý Store.
+*   **Đơn vị:** Khoa Công nghệ thông tin - Đại học Lạc Lồng.

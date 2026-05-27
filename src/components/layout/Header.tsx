@@ -17,12 +17,15 @@ import {
 } from 'antd';
 import type { MenuProps } from 'antd';
 import {
+  CloseOutlined,
+  DownOutlined,
   MenuOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
 import { useCartStore } from '@/store/useCartStore';
 import { useUIStore } from '@/store/useUIStore';
+import { useHasHydrated } from '@/hooks/useHasHydrated';
 import styles from './Header.module.scss';
 
 type MegaCategory = {
@@ -121,9 +124,10 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const hydrated = useHasHydrated();
   const screens = Grid.useBreakpoint();
 
-  const isMobile = !screens.md;
+  const isMobile = hydrated && !screens.md;
 
   const cartHydrated = useCartStore((s) => s.hasHydrated);
   const hasHydrated = cartHydrated;
@@ -172,23 +176,30 @@ export default function Header() {
         <div className={styles.topRow}>
           <Link href="/" className={styles.logoLink} aria-label="Về trang chủ Dáng Ý">
             <Space size={0} orientation="vertical">
-              <Typography.Text className={styles.brandName}>Dáng Ý</Typography.Text>
-              <Typography.Text className={styles.brandSub}>E-Commerce</Typography.Text>
+              <span className={styles.brandName}>Dáng Ý</span>
+              <span className={styles.brandSub}>E-Commerce</span>
             </Space>
           </Link>
 
-          {!isMobile ? (
-            <Input.Search
-              className={styles.searchDesktop}
+          <div className={styles.customSearchWrapper}>
+            <Input
+              className={styles.customInput}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              onSearch={handleSearch}
-              placeholder="Tìm sản phẩm, thương hiệu, danh mục..."
-              enterButton={<SearchOutlined />}
+              onPressEnter={() => handleSearch(searchValue)}
+              placeholder="Tìm sản phẩm, thương hiệu..."
               size="large"
               allowClear
+              variant="borderless"
             />
-          ) : null}
+            <button 
+              className={styles.customSearchBtn} 
+              onClick={() => handleSearch(searchValue)}
+              aria-label="Tìm kiếm"
+            >
+              <SearchOutlined />
+            </button>
+          </div>
 
           <div className={styles.actions}>
             <Badge count={cartCount} overflowCount={99} size="small">
@@ -201,96 +212,127 @@ export default function Header() {
               />
             </Badge>
 
-            {isMobile ? (
-              <Button
-                type="text"
-                icon={<MenuOutlined />}
-                onClick={() => setDrawerOpen(true)}
-                className={styles.iconButton}
-                aria-label="Mở menu điều hướng"
-              />
-            ) : null}
+            <Button
+              type="text"
+              icon={<MenuOutlined />}
+              onClick={() => setDrawerOpen(true)}
+              className={`${styles.iconButton} ${styles.mobileMenuBtn}`}
+              aria-label="Mở menu"
+            />
           </div>
         </div>
 
-        {!isMobile ? (
-          <div className={styles.navDesktopRow}>
-            <Dropdown
-              popupRender={() => megaMenuContent}
-              trigger={['hover']}
-              classNames={{ root: styles.megaOverlay }}
-            >
-              <Button type="text" className={styles.categoryTrigger}>
-                Danh mục sản phẩm
-              </Button>
-            </Dropdown>
+        <div className={styles.navDesktopRow}>
+          <Dropdown
+            popupRender={() => megaMenuContent}
+            trigger={['hover']}
+            classNames={{ root: styles.megaOverlay }}
+          >
+            <Button type="text" className={styles.categoryTrigger} icon={<DownOutlined />}>
+              Danh mục sản phẩm
+            </Button>
+          </Dropdown>
 
-            <Menu
-              mode="horizontal"
-              items={navItems}
-              selectedKeys={selectedKeys}
-              className={styles.menuDesktop}
-            />
-          </div>
-        ) : (
-          <Input.Search
-            className={styles.searchMobile}
+          <Menu
+            mode="horizontal"
+            items={navItems}
+            selectedKeys={selectedKeys}
+            className={styles.menuDesktop}
+          />
+        </div>
+
+        <div className={styles.customSearchMobile}>
+          <Input
+            className={styles.customInputMobile}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            onSearch={handleSearch}
+            onPressEnter={() => handleSearch(searchValue)}
             placeholder="Tìm sản phẩm..."
-            enterButton={<SearchOutlined />}
             allowClear
+            variant="borderless"
           />
-        )}
+          <button 
+            className={styles.customSearchBtnMobile} 
+            onClick={() => handleSearch(searchValue)}
+            aria-label="Tìm kiếm"
+          >
+            <SearchOutlined />
+          </button>
+        </div>
       </div>
 
       <Drawer
-        title="Danh mục"
+        title={<span className={styles.drawerTitle}>DANH MỤC</span>}
         placement="right"
-        size="default"
-        open={drawerOpen}
+        size="large"
         onClose={() => setDrawerOpen(false)}
+        open={drawerOpen}
+        closeIcon={<CloseOutlined />}
+        styles={{
+          body: { padding: 0 }
+        }}
       >
-        <Input.Search
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={handleSearch}
-          placeholder="Tìm sản phẩm..."
-          enterButton={<SearchOutlined />}
-          allowClear
-          className={styles.drawerSearch}
-        />
-
-        <Menu
-          mode="inline"
-          items={navItems}
-          selectedKeys={selectedKeys}
-          onClick={() => setDrawerOpen(false)}
-          className={styles.menuMobile}
-        />
-
-        <Collapse
-          className={styles.mobileCategoryCollapse}
-          items={megaCategories.map((category) => ({
-            key: category.title,
-            label: category.title,
-            children: (
-              <div className={styles.mobileCategoryLinks}>
-                {category.links.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={styles.mobileCategoryLink}
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
+        <div className={styles.drawerInner}>
+          <div className={styles.drawerSearchWrapper}>
+            <div className={`${styles.customSearchMobile} ${styles.drawerSearch}`}>
+              <Input
+                className={styles.customInputMobile}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onPressEnter={() => handleSearch(searchValue)}
+                placeholder="Bạn đang tìm gì?..."
+                allowClear
+                variant="borderless"
+              />
+              <button 
+                className={styles.customSearchBtnMobile} 
+                onClick={() => handleSearch(searchValue)}
+                aria-label="Tìm kiếm"
+              >
+                <SearchOutlined />
+              </button>
+            </div>
+          </div>
+          
+          <Collapse 
+            ghost 
+            expandIconPosition="end"
+            className={styles.drawerCollapse}
+          >
+            <Collapse.Panel header="DANH MỤC SẢN PHẨM" key="categories">
+              <div className={styles.drawerLinks}>
+                {megaCategories.map((mega) => (
+                  <div key={mega.title} className={styles.drawerCategoryGroup}>
+                    <div className={styles.drawerLabel}>{mega.title}</div>
+                    {mega.links.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className={styles.drawerLink}
+                        onClick={() => setDrawerOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
-            ),
-          }))}
-        />
+            </Collapse.Panel>
+          </Collapse>
+
+          <div className={styles.drawerBottomMenu}>
+            {(navItems as any).map((item: any) => (
+              <Link
+                key={item.key}
+                href={item.key}
+                className={styles.drawerBottomLink}
+                onClick={() => setDrawerOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </Drawer>
     </header>
   );

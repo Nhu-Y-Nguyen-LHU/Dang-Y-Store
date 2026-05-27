@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display, Geist_Mono } from 'next/font/google';
 import 'antd/dist/reset.css';
 import './globals.css';
@@ -46,6 +46,12 @@ export const metadata: Metadata = {
       'Thời trang & phụ kiện cao cấp, tinh tuyển trong từng chi tiết.',
     images: ['/images/products/nhan-kim-cuong.jpg'],
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

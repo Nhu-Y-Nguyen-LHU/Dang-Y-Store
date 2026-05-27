@@ -1,94 +1,81 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProductByIdOrSlug } from '@/lib/products';
-import ProductDetailView from './ProductDetailView';
-import styles from './product-detail.module.scss';
+import { supabase, isDummySupabase } from '@/lib/supabase';
+import { mockProducts } from '@/data/products';
+import ProductDetailClient from '@/components/products/ProductDetailClient';
+import type { Product } from '@/types/product';
 
-type ApiRating = {
-  rate: number;
-  count: number;
-};
+// Ép buộc Next.js không cache tĩnh trang chi tiết để luôn lấy dữ liệu giá/tồn kho thực tế
+export const revalidate = 0;
 
-type ApiProduct = {
-  id: number | string;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  rating: ApiRating;
-};
-
-function getSiteOrigin() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (siteUrl) return siteUrl;
-
-  const vercelUrl = process.env.VERCEL_URL;
-  if (vercelUrl) return `https://${vercelUrl}`;
-
-  return 'http://localhost:3000';
-}
-
-async function getProduct(id: string): Promise<ApiProduct | null> {
-  // Try internal product first (supports slug or internal id)
-  const local = getProductByIdOrSlug(id);
-  if (local) {
-    return {
-      id: local.id,
-      title: local.name,
-      price: local.price,
-      description: local.description,
-      category: local.category,
-      image: Array.isArray(local.images) && local.images.length > 0 ? local.images[0] : '/images/categories/default_real.jpg',
-      rating: { rate: 4.5, count: 0 },
-    };
+/**
+ * Trợ năng truy vấn sản phẩm thông minh dựa trên Slug thân thiện (SEO-friendly) hoặc ID.
+ * Bỏ qua kết nối DB nếu đang dùng key giả lập để tối ưu tốc độ tối đa (0ms).
+ */
+async function getProductBySlugOrId(slugOrId: string): Promise<Product | null> {
+  // TỐI ƯU HÓA TỐC ĐỘ: Nếu đang dùng key giả lập, bypass kết nối DB để tránh chờ mạng timeout (23 giây)!
+  if (isDummySupabase) {
+    const local = mockProducts.find(
+      (p) => p.slug === slugOrId || p.id === slugOrId
+    );
+    return (local as Product) || null;
   }
-
-  // Fallback to external numeric API when id is a number
-  if (!/^\d+$/.test(id)) return null;
 
   try {
-    const response = await fetch(`https://fakestoreapi.com/products/${id}`, {
-      cache: 'no-store',
-    });
+    // Bước 1: Ưu tiên tìm kiếm theo slug thân thiện (Ví dụ: ao-dai-gam-hoa)
+    const { data: productBySlug } = await supabase
+      .from('products')
+      .select('*')
+      .eq('slug', slugOrId)
+      .maybeSingle();
 
-    if (!response.ok) return null;
+    if (productBySlug) return productBySlug as Product;
 
-    const data = (await response.json()) as ApiProduct;
-    if (!data || !data.id) return null;
+    // Bước 2: Tìm kiếm theo UUID hoặc ID thông thường nếu khách hàng click từ link cũ
+    const { data: productById } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', slugOrId)
+      .maybeSingle();
 
-    return data;
-  } catch {
-    return null;
+    if (productById) return productById as Product;
+
+    // Bước 3: Dự phòng (Fallback) kiểm tra dữ liệu Mock cũ để tránh bị lỗi trang (Graceful Fallback)
+    const local = mockProducts.find(
+      (p) => p.slug === slugOrId || p.id === slugOrId
+    );
+    if (local) return local as Product;
+  } catch (err) {
+    console.error('[Supabase Detail Fetch Error]:', err);
   }
+
+  return null;
 }
 
+/**
+ * Sinh Siêu dữ liệu SEO động (Dynamic SEO Metadata) chuẩn quốc tế.
+ */
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const product = await getProduct(id);
-  const siteOrigin = getSiteOrigin();
-  const productUrl = `${siteOrigin}/products/${id}`;
+  const product = await getProductBySlugOrId(id);
 
   if (!product) {
     return {
-      title: 'Sản phẩm không tồn tại',
-      description: 'Sản phẩm bạn tìm kiếm không tồn tại hoặc đã bị gỡ khỏi hệ thống.',
+      title: 'Không tìm thấy sản phẩm | Dáng Ý Store',
+      description: 'Sản phẩm quý khách tìm kiếm không tồn tại hoặc đã dừng bán.',
       robots: { index: false, follow: false },
-      alternates: {
-        canonical: productUrl,
-      },
     };
   }
 
-  const title = `${product.title} | Dáng Ý Store`;
+  const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const productUrl = `${siteOrigin}/products/${product.slug || product.id}`;
+  const title = `${product.name} | Dáng Ý Store — Thời Trang Gấm Quý Phái`;
   const description = product.description;
-  const imageUrl = product.image;
+  const imageUrl = product.images?.[0] || '';
 
   return {
     title,
@@ -97,34 +84,66 @@ export async function generateMetadata({
       canonical: productUrl,
     },
     openGraph: {
-      type: 'website',
+      type: 'article',
       url: productUrl,
       siteName: 'Dáng Ý Store',
       title,
       description,
-      images: [{ url: imageUrl, alt: product.title }],
+      images: imageUrl ? [{ url: imageUrl, alt: product.name }] : [],
       locale: 'vi_VN',
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [imageUrl],
+      images: imageUrl ? [imageUrl] : [],
     },
   };
 }
 
+/**
+ * Server Component: Trang Chi Tiết Sản Phẩm (Dáng Ý Premium Detail Page)
+ */
 export default async function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getProductBySlugOrId(id);
 
-  if (!product) notFound();
+  // Trả về trang 404 chuẩn của Next.js nếu sản phẩm hoàn toàn không tồn tại
+  if (!product) {
+    notFound();
+  }
+
+  // Tải sản phẩm liên quan: Tránh chờ timeout 23s nếu dùng key giả lập
+  let relatedProducts: Product[] = [];
+  if (isDummySupabase) {
+    relatedProducts = mockProducts
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, 4) as Product[];
+  } else {
+    try {
+      const { data: relatedData } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category', product.category)
+        .neq('id', product.id)
+        .limit(4);
+
+      if (relatedData) {
+        relatedProducts = relatedData as Product[];
+      }
+    } catch (err) {
+      console.error('Lỗi khi truy vấn sản phẩm liên quan từ DB:', err);
+    }
+  }
 
   return (
-    <ProductDetailView product={product} />
+    <ProductDetailClient 
+      product={product} 
+      relatedProducts={relatedProducts} 
+    />
   );
 }

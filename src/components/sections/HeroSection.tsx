@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './HeroSection.module.scss';
 
 const easeElite: [number, number, number, number] = [0.43, 0.13, 0.23, 0.96];
@@ -10,62 +11,90 @@ export default function HeroSection() {
   return (
     <section className={styles.hero}>
       <div className={styles.inner}>
-        <motion.p
-          className={styles.kicker}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: easeElite }}
-        >
-          Tinh tuyển cao cấp
-        </motion.p>
+        <div className={styles.content}>
+          <motion.span
+            className={styles.kicker}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            Tinh tuyển cao cấp
+          </motion.span>
 
-        <motion.h1
-          className={styles.title}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.05, ease: easeElite }}
-        >
-          Dáng Ý —
-          <br />
-          Tối giản, nhưng để lại dư âm.
-        </motion.h1>
+          <motion.h1
+            className={styles.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          >
+            Dáng Ý —<br />
+            Tối giản, nhưng<br />để lại dư âm.
+          </motion.h1>
 
-        <motion.p
-          className={styles.subtitle}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.12, ease: easeElite }}
-        >
-          Mỗi thiết kế được tạo nên bằng sự chuẩn xác thầm lặng và dấu ấn đỏ rượu tinh tế —
-          sang trọng, tiết chế, và mang tính cá nhân rõ rệt.
-        </motion.p>
+          <motion.p
+            className={styles.subtitle}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Mỗi thiết kế được tạo nên bằng sự chuẩn xác thầm lặng và dấu ấn đỏ rượu tinh tế —
+            sang trọng, tiết chế, và mang tính cá nhân rõ rệt.
+          </motion.p>
+
+          <motion.div
+            className={styles.actionRow}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <Link href="/products" className={styles.primaryBtn}>
+              Khám phá ngay
+            </Link>
+            <Link href="/about" className={styles.secondaryBtn}>
+              Về thương hiệu
+            </Link>
+          </motion.div>
+
+          <motion.div 
+            className={styles.stats}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            <div className={styles.statItem}>
+              <span className={styles.statValue}>500+</span>
+              <span className={styles.statLabel}>Sản phẩm tinh tuyển</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statValue}>24h</span>
+              <span className={styles.statLabel}>Giao hàng hỏa tốc</span>
+            </div>
+          </motion.div>
+        </div>
 
         <motion.div
-          className={styles.ctaRow}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.18, ease: easeElite }}
+          className={styles.visual}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, delay: 0.2, ease: easeElite }}
         >
-          <Link href="#products" className={styles.primaryCta}>
-            Khám phá ngay
-          </Link>
-          <Link href="/product/the-dang-y-signature-ring" className={styles.secondaryCta}>
-            Sở hữu mẫu Signature
-          </Link>
-        </motion.div>
-
-        <motion.div
-          className={styles.panel}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.24, ease: easeElite }}
-        >
-          <div className={styles.panelInner}>
-            <p className={styles.panelTitle}>Cam kết Dáng Ý</p>
-            <p className={styles.panelLine}>
-              Dấu ấn <span className={styles.wineAccent}>đỏ rượu</span> tinh tế,
-              chất liệu thượng hạng, và phom dáng vượt thời gian.
-            </p>
+          <div className={styles.imageContainer}>
+            <Image
+              src="/images/products/mdny-001_v2.jpg"
+              alt="Dáng Ý Luxury Collection"
+              fill
+              className={styles.heroImage}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
+              loading="eager"
+            />
+            <div className={styles.imageOverlay}>
+              <div className={styles.overlayBrand}>
+                <div className={styles.brandLine} />
+                <p className={styles.brandTitle}>Dáng Ý Signature</p>
+                <div className={styles.brandLine} />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>

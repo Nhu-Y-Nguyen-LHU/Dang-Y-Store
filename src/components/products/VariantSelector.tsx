@@ -129,13 +129,42 @@ export default function VariantSelector({
             {colors.map((color) => {
               const isSelected = selectedVariant?.color === color;
               const isAvailable = availableColors.includes(color);
-              const colorMap: { [key: string]: string } = {
-                Vàng: '#D4AF37',
-                Bạc: '#C0C0C0',
-                Đen: '#1F2937',
-                Trắng: '#F3F4F6',
-                Xanh: '#0369A1',
-                Đỏ: '#DC2626',
+              // Ánh xạ bảng màu thương hiệu Dáng Ý Store
+              const getColorValue = (colorName: string) => {
+                const lower = colorName.toLowerCase();
+                if (lower.includes('đỏ') || lower.includes('red') || lower.includes('rượu')) {
+                  return '#722F37'; // Màu đỏ rượu vang quý phái của tiêu đề Dáng Ý
+                }
+                if (lower.includes('vàng') || lower.includes('gold')) return '#D4AF37';
+                if (lower.includes('bạc') || lower.includes('silver')) return '#C0C0C0';
+                if (lower.includes('đen') || lower.includes('black')) return '#1F2937';
+                if (lower.includes('trắng') || lower.includes('white')) return '#F3F4F6';
+                if (lower.includes('xanh') || lower.includes('blue')) return '#0369A1';
+                
+                const colorMap: { [key: string]: string } = {
+                  Vàng: '#D4AF37',
+                  Bạc: '#C0C0C0',
+                  Đen: '#1F2937',
+                  Trắng: '#F3F4F6',
+                  Xanh: '#0369A1',
+                  Đỏ: '#722F37',
+                };
+                return colorMap[colorName] || colorName;
+              };
+
+              // Kiểm tra xem đây có phải là tông màu sáng hay không để đổi màu dấu check
+              const isLightColor = (colorName: string) => {
+                const lower = colorName.toLowerCase();
+                return (
+                  lower.includes('trắng') ||
+                  lower.includes('white') ||
+                  lower.includes('bạc') ||
+                  lower.includes('silver') ||
+                  lower.includes('vàng') ||
+                  lower.includes('gold') ||
+                  lower.includes('f3f4f6') ||
+                  lower.includes('ffffff')
+                );
               };
 
               return (
@@ -146,13 +175,30 @@ export default function VariantSelector({
                     !isAvailable ? styles.disabled : ''
                   }`}
                   style={{
-                    backgroundColor: colorMap[color] || color,
+                    backgroundColor: getColorValue(color),
                     border: isSelected ? '2px solid #722F37' : '2px solid #e5e7eb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                   title={color}
                   disabled={!isAvailable}
                   aria-label={`Select color ${color}`}
-                />
+                >
+                  {isSelected && (
+                    <span
+                      style={{
+                        color: isLightColor(color) ? '#722F37' : '#ffffff', // Đúng màu rượu đỏ thương hiệu trên nền sáng!
+                        fontWeight: 'bold',
+                        fontSize: '1.2rem',
+                        textShadow: isLightColor(color) ? 'none' : '0 0 3px rgba(0,0,0,0.5)',
+                        lineHeight: 1,
+                      }}
+                    >
+                      ✓
+                    </span>
+                  )}
+                </button>
               );
             })}
           </div>

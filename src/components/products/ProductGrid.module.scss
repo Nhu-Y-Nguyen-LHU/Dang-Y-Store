@@ -2,18 +2,23 @@
 
 .productGridContainer {
   width: 100%;
-  padding: 4rem 2rem; // Generous whitespace
+  padding: 2rem 1.25rem; // Reduced padding for mobile
   background-color: white;
+
+  @media (min-width: 768px) {
+    padding: 4rem 2rem; // Original padding for desktop
+  }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem 1.5rem; // row-gap, column-gap
+  grid-template-columns: repeat(2, 1fr); // 2 columns on mobile
+  gap: 1rem 0.75rem; // Smaller gap for mobile
 
   // Tablet and above
   @media (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 1.5rem;
   }
 
   // Desktop
